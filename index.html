@@ -6,6 +6,7 @@
 <title>위촉 준비 가이드 — PRo</title>
 <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 
 
@@ -917,7 +918,7 @@ hr{border:none;border-top:1px solid #FCE4EC;margin:.9rem 0}
 <body>
 <div class="header">
   <div class="header-top">
-    <div class="logo">
+    <div class="logo" onclick="handleAdminClick()" style="cursor:pointer">
       <img src="data:image/png;base64,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" alt="PRo" style="height:13px;width:auto;vertical-align:middle">
       <span class="logo-txt">위촉준비</span>
     </div>
@@ -927,6 +928,7 @@ hr{border:none;border-top:1px solid #FCE4EC;margin:.9rem 0}
   </div>
   <div class="tab-bar">
     <button class="tab-btn active" onclick="switchTab('checklist',this)">📋 위촉 준비</button>
+    <button class="tab-btn" id="admin-tab-btn" onclick="switchTab('admin',this)" style="display:none">⚙️ 관리자</button>
     <button class="tab-btn" onclick="switchTab('reapply',this)">🔄 재접수</button>
     <button class="tab-btn" onclick="switchTab('schedule',this)">📅 일정 조회</button>
     <button class="tab-btn" onclick="switchTab('autofill',this)">📄 서류 자동입력</button>
@@ -1209,6 +1211,80 @@ hr{border:none;border-top:1px solid #FCE4EC;margin:.9rem 0}
     </div>
   </div>
 </div>
+<!-- TAB: 관리자 -->
+<div class="tab-screen" id="tab-admin">
+  <div class="card">
+    <div class="card-title">⚙️ 관리자 — 일정 업데이트</div>
+
+    <!-- 손보 일정 엑셀 업로드 -->
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">📊 손보 일정 엑셀 업로드</div>
+      <div style="font-size:11.5px;color:var(--text3);margin-bottom:8px">형식: A열=서류마감(YYYY-MM-DD), B열=위촉일(YYYY-MM-DD)</div>
+      <div class="af-upload-box" style="margin-bottom:8px">
+        <input type="file" accept=".xlsx,.xls" onchange="loadSonboExcel(this)">
+        <div class="u-icon">📋</div>
+        <div class="u-text">손보 일정 엑셀 선택</div>
+        <div class="u-sub">클릭하거나 파일을 끌어오세요</div>
+      </div>
+      <div id="sonbo-preview" style="font-size:12px;color:var(--text2);background:var(--bg);border-radius:var(--r-s);padding:10px;display:none"></div>
+      <button onclick="applySonbo()" id="btn-apply-sonbo" style="display:none;width:100%;margin-top:8px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-s);padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">✅ 손보 일정 적용</button>
+    </div>
+
+    <div style="border-top:1px solid var(--border);margin-bottom:20px"></div>
+
+    <!-- 생보 일정 엑셀 업로드 -->
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">📊 생보 일정 엑셀 업로드</div>
+      <div style="font-size:11.5px;color:var(--text3);margin-bottom:8px">형식: A열=보험사명, B열=회차, C열=서류마감(M/D), D열=위촉일(M/D), E열=URL발송(M/D 또는 고정링크)</div>
+      <div class="af-upload-box" style="margin-bottom:8px">
+        <input type="file" accept=".xlsx,.xls" onchange="loadSaengboExcel(this)">
+        <div class="u-icon">📋</div>
+        <div class="u-text">생보 일정 엑셀 선택</div>
+        <div class="u-sub">클릭하거나 파일을 끌어오세요</div>
+      </div>
+      <div id="saengbo-preview" style="font-size:12px;color:var(--text2);background:var(--bg);border-radius:var(--r-s);padding:10px;display:none"></div>
+      <button onclick="applySaengbo()" id="btn-apply-saengbo" style="display:none;width:100%;margin-top:8px;background:var(--accent);color:#fff;border:none;border-radius:var(--r-s);padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">✅ 생보 일정 적용</button>
+    </div>
+
+    <div style="border-top:1px solid var(--border);margin-bottom:20px"></div>
+
+    <!-- 전체일정 이미지 교체 -->
+    <div style="margin-bottom:20px">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">🖼️ 전체일정 이미지 교체</div>
+      <div class="af-upload-box" style="margin-bottom:8px">
+        <input type="file" accept="image/*" onchange="loadScheduleImg(this)">
+        <div class="u-icon">🖼️</div>
+        <div class="u-text">전체일정 이미지 선택</div>
+        <div class="u-sub">JPG, PNG 가능</div>
+      </div>
+      <img id="schedule-img-preview" style="display:none;width:100%;border-radius:var(--r-s);border:1px solid var(--border);margin-bottom:8px">
+      <button onclick="applyScheduleImg()" id="btn-apply-img" style="display:none;width:100%;background:var(--accent);color:#fff;border:none;border-radius:var(--r-s);padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">✅ 전체일정 이미지 적용</button>
+    </div>
+
+    <div style="border-top:1px solid var(--border);padding-top:14px">
+      <button onclick="adminLogout()" style="width:100%;background:var(--border-soft);color:var(--text2);border:none;border-radius:var(--r-s);padding:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">🔒 관리자 모드 종료</button>
+    </div>
+  </div>
+</div>
+
+<!-- 관리자 비밀번호 팝업 -->
+<div class="popup-bg" id="admin-pw-popup">
+  <div class="popup-box">
+    <div class="popup-head" style="background:linear-gradient(135deg,#4A5568,#2D3748)">
+      <div class="p-icon">🔐</div>
+      <div class="p-title">관리자 전용</div>
+    </div>
+    <div class="popup-body">
+      <input id="admin-pw-input" type="password" placeholder="비밀번호 입력"
+        style="width:100%;border:1.5px solid var(--border);border-radius:var(--r-s);padding:12px;font-size:15px;font-family:inherit;margin-bottom:12px;outline:none;text-align:center;letter-spacing:4px"
+        onkeydown="if(event.key==='Enter')checkAdminPw()">
+      <div id="admin-pw-err" style="font-size:12px;color:#E53E3E;text-align:center;margin-bottom:10px;display:none">비밀번호가 틀렸어요</div>
+      <button onclick="checkAdminPw()" style="width:100%;background:linear-gradient(135deg,#4A5568,#2D3748);color:#fff;border:none;border-radius:var(--r-s);padding:13px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:8px">확인</button>
+      <button onclick="document.getElementById('admin-pw-popup').classList.remove('show')" style="width:100%;background:var(--border-soft);color:var(--text2);border:none;border-radius:var(--r-s);padding:11px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">취소</button>
+    </div>
+  </div>
+</div>
+
 
 <!-- 전체일정 모달 -->
 <div id="schModal" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.6);overflow-y:auto" onclick="if(event.target===this)closeSchModal()">
@@ -1222,6 +1298,140 @@ hr{border:none;border-top:1px solid #FCE4EC;margin:.9rem 0}
 </div>
 
 <script>
+
+// ╔══════════════════════════════════════════════════════════════╗
+// ║           📅 일정 데이터 관리 — 여기만 수정하세요!              ║
+// ╚══════════════════════════════════════════════════════════════╝
+
+// ── 손보 일정 ──────────────────────────────────────────────────
+// 새 회차 추가: {deadline:new Date('YYYY-MM-DD'), wichok:new Date('YYYY-MM-DD')} 형식으로 추가
+const SONBO = [
+  {deadline:new Date('2026-08-24'),wichok:new Date('2026-09-04')},
+  {deadline:new Date('2026-08-27'),wichok:new Date('2026-09-09')},
+  {deadline:new Date('2026-08-31'),wichok:new Date('2026-09-11')},
+  {deadline:new Date('2026-09-03'),wichok:new Date('2026-09-16')},
+  {deadline:new Date('2026-09-07'),wichok:new Date('2026-09-18')},
+  {deadline:new Date('2026-09-10'),wichok:new Date('2026-09-23')},
+  {deadline:new Date('2026-09-14'),wichok:new Date('2026-09-25')},
+  {deadline:new Date('2026-09-17'),wichok:new Date('2026-09-30')},
+  {deadline:new Date('2026-09-21'),wichok:new Date('2026-10-02')},
+  {deadline:new Date('2026-09-24'),wichok:new Date('2026-10-07')},
+  {deadline:new Date('2026-09-28'),wichok:new Date('2026-10-09')},
+  {deadline:new Date('2026-10-01'),wichok:new Date('2026-10-14')},
+  {deadline:new Date('2026-10-05'),wichok:new Date('2026-10-16')},
+];
+
+// ── 생보 일정 ──────────────────────────────────────────────────
+// 새 회차 추가: 해당 보험사 schedules 배열 맨 아래에
+// {round:'N차', deadline:'M/D', wichok:'M/D', urlSend:'M/D'} 형식으로 추가
+// urlSend가 고정링크인 경우: urlSend:'고정링크'
+// urlSend가 협회등록 이후인 경우: urlSend:'고정링크_협등 이후'
+const SAENGBO = {
+  동양생명:{type:'협회등록',schedules:[
+    {round:'1차',deadline:'8/27',wichok:'9/7'},
+    {round:'2차',deadline:'9/3',wichok:'9/14'},
+    {round:'3차',deadline:'9/10',wichok:'9/21'},
+  ]},
+  라이나생명:{type:'서류제출',schedules:[
+    {round:'1차',deadline:'8/24',wichok:'9/7'},
+    {round:'2차',deadline:'8/31',wichok:'9/14'},
+    {round:'3차',deadline:'9/7',wichok:'9/21'},
+    {round:'4차',deadline:'9/10',wichok:'9/28'},
+  ]},
+  처브라이프:{type:'서류제출',schedules:[
+    {round:'1차',deadline:'8/25',wichok:'9/7'},
+    {round:'2차',deadline:'9/2',wichok:'9/15'},
+    {round:'3차',deadline:'9/11',wichok:'9/28'},
+  ]},
+  흥국생명:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/24',wichok:'9/4',urlSend:'8/27'},
+    {round:'2차',deadline:'9/3',wichok:'9/15',urlSend:'9/8'},
+    {round:'3차',deadline:'9/11',wichok:'9/28',urlSend:'9/16'},
+  ]},
+  미래에셋:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/24',wichok:'9/8',urlSend:'8/31'},
+    {round:'2차',deadline:'9/1',wichok:'9/15',urlSend:'9/7'},
+    {round:'3차',deadline:'9/5',wichok:'9/22',urlSend:'9/14'},
+  ]},
+  한화생명:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/19',wichok:'9/3',urlSend:'8/25'},
+    {round:'2차',deadline:'8/27',wichok:'9/14',urlSend:'9/3'},
+    {round:'3차',deadline:'9/8',wichok:'9/22',urlSend:'9/14'},
+  ]},
+  iM라이프:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/13',wichok:'9/4',urlSend:'8/21'},
+    {round:'2차',deadline:'8/20',wichok:'9/9',urlSend:'8/31'},
+    {round:'3차',deadline:'9/1',wichok:'9/17',urlSend:'9/8'},
+  ]},
+  교보생명:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/27',wichok:'9/7',urlSend:'9/1'},
+    {round:'2차',deadline:'9/4',wichok:'9/15',urlSend:'9/9'},
+    {round:'3차',deadline:'9/15',wichok:'9/28',urlSend:'9/18'},
+  ]},
+  삼성생명:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/19',wichok:'9/7',urlSend:'8/26'},
+    {round:'2차',deadline:'8/26',wichok:'9/14',urlSend:'9/2'},
+    {round:'3차',deadline:'9/4',wichok:'9/23',urlSend:'9/11'},
+  ]},
+  KB라이프:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/31',wichok:'9/9',urlSend:'고정링크'},
+    {round:'2차',deadline:'9/7',wichok:'9/16',urlSend:'고정링크'},
+    {round:'3차',deadline:'9/14',wichok:'9/23',urlSend:'고정링크'},
+  ]},
+  DB생명:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/26',wichok:'9/9',urlSend:'8/31'},
+    {round:'2차',deadline:'9/2',wichok:'9/16',urlSend:'9/7'},
+    {round:'3차',deadline:'9/9',wichok:'9/23',urlSend:'9/14'},
+  ]},
+  KDB생명:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/18',wichok:'9/3',urlSend:'8/26'},
+    {round:'2차',deadline:'8/25',wichok:'9/10',urlSend:'9/2'},
+    {round:'3차',deadline:'9/1',wichok:'9/17',urlSend:'9/9'},
+  ]},
+  메트라이프:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/26',wichok:'9/7',urlSend:'고정링크'},
+    {round:'2차',deadline:'9/3',wichok:'9/15',urlSend:'고정링크'},
+    {round:'3차',deadline:'9/14',wichok:'9/28',urlSend:'고정링크'},
+  ]},
+  신한라이프:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/21',wichok:'9/7',urlSend:'고정링크'},
+    {round:'2차',deadline:'8/31',wichok:'9/15',urlSend:'고정링크'},
+    {round:'3차',deadline:'9/9',wichok:'9/28',urlSend:'고정링크'},
+  ]},
+  푸본현대:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/27',wichok:'9/4',urlSend:'9/1'},
+    {round:'2차',deadline:'9/7',wichok:'9/15',urlSend:'9/10'},
+    {round:'3차',deadline:'9/15',wichok:'9/28',urlSend:'9/18'},
+  ]},
+  NH농협:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/20',wichok:'9/3',urlSend:'8/28'},
+    {round:'2차',deadline:'8/31',wichok:'9/10',urlSend:'9/7'},
+    {round:'3차',deadline:'9/7',wichok:'9/17',urlSend:'9/14'},
+  ]},
+  ABL생명:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/25',wichok:'9/7',urlSend:'9/1'},
+    {round:'2차',deadline:'9/2',wichok:'9/15',urlSend:'9/9'},
+    {round:'3차',deadline:'9/10',wichok:'9/23',urlSend:'9/17'},
+  ]},
+  IBK연금:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/26',wichok:'9/7',urlSend:'9/1'},
+    {round:'2차',deadline:'9/3',wichok:'9/15',urlSend:'9/9'},
+    {round:'3차',deadline:'9/14',wichok:'9/28',urlSend:'9/18'},
+  ]},
+  카디프:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/25',wichok:'9/10',urlSend:'9/1'},
+    {round:'2차',deadline:'9/1',wichok:'9/17',urlSend:'9/8'},
+    {round:'3차',deadline:'9/8',wichok:'9/23',urlSend:'9/15'},
+  ]},
+  하나생명:{type:'전자서명',schedules:[
+    {round:'1차',deadline:'8/24',wichok:'9/4',urlSend:'고정링크_협등 이후'},
+    {round:'2차',deadline:'8/31',wichok:'9/11',urlSend:'고정링크_협등 이후'},
+    {round:'3차',deadline:'9/7',wichok:'9/18',urlSend:'고정링크_협등 이후'},
+  ]},
+};
+
+// ══════════════════════════════════════════════════════════════
+
 // ── 탭 전환 ──
 function switchTab(id, btn) {
   document.querySelectorAll('.tab-screen').forEach(s => s.classList.remove('active'));
@@ -1523,21 +1733,7 @@ function runSearch() {
   }
 }
 
-const SONBO = [
-  {deadline:new Date('2026-08-24'),wichok:new Date('2026-09-04')},
-  {deadline:new Date('2026-08-27'),wichok:new Date('2026-09-09')},
-  {deadline:new Date('2026-08-31'),wichok:new Date('2026-09-11')},
-  {deadline:new Date('2026-09-03'),wichok:new Date('2026-09-16')},
-  {deadline:new Date('2026-09-07'),wichok:new Date('2026-09-18')},
-  {deadline:new Date('2026-09-10'),wichok:new Date('2026-09-23')},
-  {deadline:new Date('2026-09-14'),wichok:new Date('2026-09-25')},
-  {deadline:new Date('2026-09-17'),wichok:new Date('2026-09-30')},
-  {deadline:new Date('2026-09-21'),wichok:new Date('2026-10-02')},
-  {deadline:new Date('2026-09-24'),wichok:new Date('2026-10-07')},
-  {deadline:new Date('2026-09-28'),wichok:new Date('2026-10-09')},
-  {deadline:new Date('2026-10-01'),wichok:new Date('2026-10-14')},
-  {deadline:new Date('2026-10-05'),wichok:new Date('2026-10-16')},
-];
+// SONBO 데이터는 상단 일정 관리 섹션을 확인하세요
 
 function fmtFull(d) {
   const days = ['일','월','화','수','목','금','토'];
@@ -1563,109 +1759,7 @@ function parseD(str) {
 
 function fmtS(str) { return str.replace(/[()]/g,'').trim(); }
 
-const SAENGBO = {
-  동양생명:{type:'협회등록',schedules:[
-    {round:'1차',deadline:'8/27',wichok:'9/7'},
-    {round:'2차',deadline:'9/3',wichok:'9/14'},
-    {round:'3차',deadline:'9/10',wichok:'9/21'},
-  ]},
-  라이나생명:{type:'서류제출',schedules:[
-    {round:'1차',deadline:'8/24',wichok:'9/7'},
-    {round:'2차',deadline:'8/31',wichok:'9/14'},
-    {round:'3차',deadline:'9/7',wichok:'9/21'},
-    {round:'4차',deadline:'9/10',wichok:'9/28'},
-  ]},
-  처브라이프:{type:'서류제출',schedules:[
-    {round:'1차',deadline:'8/25',wichok:'9/7'},
-    {round:'2차',deadline:'9/2',wichok:'9/15'},
-    {round:'3차',deadline:'9/11',wichok:'9/28'},
-  ]},
-  흥국생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/24',wichok:'9/4',urlSend:'8/27'},
-    {round:'2차',deadline:'9/3',wichok:'9/15',urlSend:'9/8'},
-    {round:'3차',deadline:'9/11',wichok:'9/28',urlSend:'9/16'},
-  ]},
-  미래에셋:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/24',wichok:'9/8',urlSend:'8/31'},
-    {round:'2차',deadline:'9/1',wichok:'9/15',urlSend:'9/7'},
-    {round:'3차',deadline:'9/5',wichok:'9/22',urlSend:'9/14'},
-  ]},
-  한화생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/19',wichok:'9/3',urlSend:'8/25'},
-    {round:'2차',deadline:'8/27',wichok:'9/14',urlSend:'9/3'},
-    {round:'3차',deadline:'9/8',wichok:'9/22',urlSend:'9/14'},
-  ]},
-  iM라이프:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/13',wichok:'9/4',urlSend:'8/21'},
-    {round:'2차',deadline:'8/20',wichok:'9/9',urlSend:'8/31'},
-    {round:'3차',deadline:'9/1',wichok:'9/17',urlSend:'9/8'},
-  ]},
-  교보생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/27',wichok:'9/7',urlSend:'9/1'},
-    {round:'2차',deadline:'9/4',wichok:'9/15',urlSend:'9/9'},
-    {round:'3차',deadline:'9/15',wichok:'9/28',urlSend:'9/18'},
-  ]},
-  삼성생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/19',wichok:'9/7',urlSend:'8/26'},
-    {round:'2차',deadline:'8/26',wichok:'9/14',urlSend:'9/2'},
-    {round:'3차',deadline:'9/4',wichok:'9/23',urlSend:'9/11'},
-  ]},
-  KB라이프:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/31',wichok:'9/9',urlSend:'고정링크'},
-    {round:'2차',deadline:'9/7',wichok:'9/16',urlSend:'고정링크'},
-    {round:'3차',deadline:'9/14',wichok:'9/23',urlSend:'고정링크'},
-  ]},
-  DB생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/26',wichok:'9/9',urlSend:'8/31'},
-    {round:'2차',deadline:'9/2',wichok:'9/16',urlSend:'9/7'},
-    {round:'3차',deadline:'9/9',wichok:'9/23',urlSend:'9/14'},
-  ]},
-  KDB생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/18',wichok:'9/3',urlSend:'8/26'},
-    {round:'2차',deadline:'8/25',wichok:'9/10',urlSend:'9/2'},
-    {round:'3차',deadline:'9/1',wichok:'9/17',urlSend:'9/9'},
-  ]},
-  메트라이프:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/26',wichok:'9/7',urlSend:'고정링크'},
-    {round:'2차',deadline:'9/3',wichok:'9/15',urlSend:'고정링크'},
-    {round:'3차',deadline:'9/14',wichok:'9/28',urlSend:'고정링크'},
-  ]},
-  신한라이프:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/21',wichok:'9/7',urlSend:'고정링크'},
-    {round:'2차',deadline:'8/31',wichok:'9/15',urlSend:'고정링크'},
-    {round:'3차',deadline:'9/9',wichok:'9/28',urlSend:'고정링크'},
-  ]},
-  푸본현대:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/27',wichok:'9/4',urlSend:'9/1'},
-    {round:'2차',deadline:'9/7',wichok:'9/15',urlSend:'9/10'},
-    {round:'3차',deadline:'9/15',wichok:'9/28',urlSend:'9/18'},
-  ]},
-  NH농협:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/20',wichok:'9/3',urlSend:'8/28'},
-    {round:'2차',deadline:'8/31',wichok:'9/10',urlSend:'9/7'},
-    {round:'3차',deadline:'9/7',wichok:'9/17',urlSend:'9/14'},
-  ]},
-  ABL생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/25',wichok:'9/7',urlSend:'9/1'},
-    {round:'2차',deadline:'9/2',wichok:'9/15',urlSend:'9/9'},
-    {round:'3차',deadline:'9/10',wichok:'9/23',urlSend:'9/17'},
-  ]},
-  IBK연금:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/26',wichok:'9/7',urlSend:'9/1'},
-    {round:'2차',deadline:'9/3',wichok:'9/15',urlSend:'9/9'},
-    {round:'3차',deadline:'9/14',wichok:'9/28',urlSend:'9/18'},
-  ]},
-  카디프:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/25',wichok:'9/10',urlSend:'9/1'},
-    {round:'2차',deadline:'9/1',wichok:'9/17',urlSend:'9/8'},
-    {round:'3차',deadline:'9/8',wichok:'9/23',urlSend:'9/15'},
-  ]},
-  하나생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'8/24',wichok:'9/4',urlSend:'고정링크_협등 이후'},
-    {round:'2차',deadline:'8/31',wichok:'9/11',urlSend:'고정링크_협등 이후'},
-    {round:'3차',deadline:'9/7',wichok:'9/18',urlSend:'고정링크_협등 이후'},
-  ]},
-};
+// SAENGBO 데이터는 상단 일정 관리 섹션을 확인하세요
 
 function renderSaengbo(input, ins) {
   const data = SAENGBO[ins];
@@ -2260,6 +2354,141 @@ function dlPdf(bytes,filename){
   URL.revokeObjectURL(url);
 }
 
+
+// ── 관리자 ──
+let newSonboData = null;
+let newSaengboData = null;
+let newScheduleImgSrc = null;
+
+function handleAdminClick() {
+  document.getElementById('admin-pw-popup').classList.add('show');
+  setTimeout(() => document.getElementById('admin-pw-input').focus(), 100);
+}
+
+function checkAdminPw() {
+  const pw = document.getElementById('admin-pw-input').value;
+  if (pw === '1235') {
+    document.getElementById('admin-pw-popup').classList.remove('show');
+    document.getElementById('admin-pw-input').value = '';
+    document.getElementById('admin-pw-err').style.display = 'none';
+    document.getElementById('admin-tab-btn').style.display = 'flex';
+    // 관리자 탭으로 이동
+    document.querySelectorAll('.tab-screen').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-admin').classList.add('active');
+    document.getElementById('admin-tab-btn').classList.add('active');
+  } else {
+    document.getElementById('admin-pw-err').style.display = 'block';
+    document.getElementById('admin-pw-input').value = '';
+  }
+}
+
+function adminLogout() {
+  document.getElementById('admin-tab-btn').style.display = 'none';
+  switchTab('checklist', document.querySelector('.tab-btn'));
+}
+
+function loadSonboExcel(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wb = XLSX.read(e.target.result, {type:'array'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {header:1}).filter(r => r[0] && r[1]);
+      newSonboData = rows.map(r => ({
+        deadline: new Date(r[0]),
+        wichok: new Date(r[1])
+      })).filter(r => !isNaN(r.deadline));
+      const preview = document.getElementById('sonbo-preview');
+      preview.style.display = 'block';
+      preview.innerHTML = newSonboData.map(r =>
+        `마감: ${r.deadline.getMonth()+1}/${r.deadline.getDate()} → 위촉: ${r.wichok.getMonth()+1}/${r.wichok.getDate()}`
+      ).join('<br>');
+      document.getElementById('btn-apply-sonbo').style.display = 'block';
+    } catch(err) {
+      alert('파일을 읽을 수 없어요. 형식을 확인해주세요.');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function applySonbo() {
+  if (!newSonboData) return;
+  SONBO.length = 0;
+  newSonboData.forEach(r => SONBO.push(r));
+  alert('✅ 손보 일정이 업데이트됐어요!');
+  document.getElementById('sonbo-preview').style.display = 'none';
+  document.getElementById('btn-apply-sonbo').style.display = 'none';
+  newSonboData = null;
+}
+
+function loadSaengboExcel(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const wb = XLSX.read(e.target.result, {type:'array'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, {header:1}).filter(r => r[0] && r[1]);
+      // 보험사별로 그룹핑
+      newSaengboData = {};
+      rows.forEach(r => {
+        const ins = r[0], round = r[1], deadline = String(r[2]||''), wichok = String(r[3]||''), urlSend = String(r[4]||'');
+        if (!newSaengboData[ins]) {
+          newSaengboData[ins] = {type: SAENGBO[ins] ? SAENGBO[ins].type : '전자서명', schedules:[]};
+        }
+        newSaengboData[ins].schedules.push({round, deadline, wichok, urlSend});
+      });
+      const preview = document.getElementById('saengbo-preview');
+      preview.style.display = 'block';
+      preview.innerHTML = Object.entries(newSaengboData).map(([ins, d]) =>
+        `<b>${ins}</b> (${d.schedules.length}개 회차)`
+      ).join('<br>');
+      document.getElementById('btn-apply-saengbo').style.display = 'block';
+    } catch(err) {
+      alert('파일을 읽을 수 없어요. 형식을 확인해주세요.');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function applySaengbo() {
+  if (!newSaengboData) return;
+  Object.entries(newSaengboData).forEach(([ins, data]) => {
+    SAENGBO[ins] = data;
+  });
+  alert('✅ 생보 일정이 업데이트됐어요!');
+  document.getElementById('saengbo-preview').style.display = 'none';
+  document.getElementById('btn-apply-saengbo').style.display = 'none';
+  newSaengboData = null;
+}
+
+function loadScheduleImg(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    newScheduleImgSrc = e.target.result;
+    const prev = document.getElementById('schedule-img-preview');
+    prev.src = newScheduleImgSrc;
+    prev.style.display = 'block';
+    document.getElementById('btn-apply-img').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function applyScheduleImg() {
+  if (!newScheduleImgSrc) return;
+  // 전체일정 모달 이미지 교체
+  document.querySelector('#schModal img').src = newScheduleImgSrc;
+  alert('✅ 전체일정 이미지가 업데이트됐어요!');
+  document.getElementById('schedule-img-preview').style.display = 'none';
+  document.getElementById('btn-apply-img').style.display = 'none';
+  newScheduleImgSrc = null;
+}
 
 </script>
 </body>
