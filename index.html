@@ -1305,21 +1305,27 @@ hr{border:none;border-top:1px solid #FCE4EC;margin:.9rem 0}
 
 // ── 손보 일정 ──────────────────────────────────────────────────
 // 새 회차 추가: {deadline:new Date('YYYY-MM-DD'), wichok:new Date('YYYY-MM-DD')} 형식으로 추가
-const SONBO = [
-  {deadline:new Date('2026-08-24'),wichok:new Date('2026-09-04')},
-  {deadline:new Date('2026-08-27'),wichok:new Date('2026-09-09')},
-  {deadline:new Date('2026-08-31'),wichok:new Date('2026-09-11')},
-  {deadline:new Date('2026-09-03'),wichok:new Date('2026-09-16')},
-  {deadline:new Date('2026-09-07'),wichok:new Date('2026-09-18')},
-  {deadline:new Date('2026-09-10'),wichok:new Date('2026-09-23')},
-  {deadline:new Date('2026-09-14'),wichok:new Date('2026-09-25')},
-  {deadline:new Date('2026-09-17'),wichok:new Date('2026-09-30')},
-  {deadline:new Date('2026-09-21'),wichok:new Date('2026-10-02')},
-  {deadline:new Date('2026-09-24'),wichok:new Date('2026-10-07')},
-  {deadline:new Date('2026-09-28'),wichok:new Date('2026-10-09')},
-  {deadline:new Date('2026-10-01'),wichok:new Date('2026-10-14')},
-  {deadline:new Date('2026-10-05'),wichok:new Date('2026-10-16')},
-];
+// 손보 일정 자동 생성 (월요일 마감→금요일 위촉, 목요일 마감→수요일 위촉)
+const SONBO = (function() {
+  const result = [];
+  const end = new Date('2027-12-31');
+  let d = new Date('2026-08-24'); // 시작일 (첫 월요일)
+  while (d <= end) {
+    const day = d.getDay(); // 0=일,1=월,4=목
+    if (day === 1) { // 월요일
+      const w = new Date(d); w.setDate(w.getDate() + 11);
+      result.push({deadline: new Date(d), wichok: w});
+      d.setDate(d.getDate() + 3);
+    } else if (day === 4) { // 목요일
+      const w = new Date(d); w.setDate(w.getDate() + 13);
+      result.push({deadline: new Date(d), wichok: w});
+      d.setDate(d.getDate() + 4);
+    } else {
+      d.setDate(d.getDate() + 1);
+    }
+  }
+  return result;
+})();
 
 // ── 생보 일정 ──────────────────────────────────────────────────
 // 새 회차 추가: 해당 보험사 schedules 배열 맨 아래에
@@ -1741,14 +1747,35 @@ function fmtFull(d) {
 }
 
 function renderSonbo(input) {
-  const passed = SONBO.filter(s => s.deadline <= input);
+  // 날짜만 비교 (시간 제거)
+  const inputD = new Date(input.getFullYear(), input.getMonth(), input.getDate());
+  const passed = SONBO.filter(s => {
+    const d = new Date(s.deadline.getFullYear(), s.deadline.getMonth(), s.deadline.getDate());
+    return d <= inputD;
+  });
   if (!passed.length) return `<div class="no-res"><div class="em">📭</div>해당 일자 이전 손보 일정이 없어요.</div>`;
-  const c = passed[passed.length-1];
-  return `<div class="rc primary" style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
+  const idx = passed.length - 1;
+  const c = passed[idx];
+
+  // 이번 회차
+  let html = `<div class="rc primary" style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
     <div class="rc-badge" style="align-self:flex-start">🟢 이번 회차</div>
     <div class="rc-item" style="flex:1"><div class="rc-label">서류 마감</div><div class="rc-val">${fmtFull(c.deadline)}</div></div>
     <div class="rc-item" style="flex:1"><div class="rc-label">위촉일 (= 코드 개시)</div><div class="rc-val green">${fmtFull(c.wichok)}</div></div>
   </div>`;
+
+  // 앞으로 5개 회차
+  const upcoming = SONBO.filter(s => new Date(s.deadline.getFullYear(), s.deadline.getMonth(), s.deadline.getDate()) > inputD).slice(0, 5);
+  if (upcoming.length) {
+    html += `<div style="font-size:11.5px;font-weight:700;color:var(--text2);margin:12px 0 6px;letter-spacing:.3px">📆 다음 회차 일정</div>`;
+    html += upcoming.map((s, i) => `
+      <div class="rc secondary" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:6px;padding:10px 14px">
+        <div class="rc-badge" style="align-self:flex-start;font-size:10px">${i+1}차 후</div>
+        <div class="rc-item" style="flex:1"><div class="rc-label">서류 마감</div><div class="rc-val" style="font-size:13px">${fmtFull(s.deadline)}</div></div>
+        <div class="rc-item" style="flex:1"><div class="rc-label">위촉일</div><div class="rc-val green" style="font-size:13px">${fmtFull(s.wichok)}</div></div>
+      </div>`).join('');
+  }
+  return html;
 }
 
 function parseD(str) {
@@ -2394,9 +2421,9 @@ function loadSonboExcel(input) {
   const reader = new FileReader();
   reader.onload = function(e) {
     try {
-      const wb = XLSX.read(e.target.result, {type:'array'});
+      const wb = XLSX.read(e.target.result, {type:'array', cellDates:true});
       const ws = wb.Sheets[wb.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(ws, {header:1}).filter(r => r[0] && r[1]);
+      const rows = XLSX.utils.sheet_to_json(ws, {header:1, raw:false, dateNF:'yyyy-mm-dd'}).filter(r => r[0] && r[1]);
       newSonboData = rows.map(r => ({
         deadline: new Date(r[0]),
         wichok: new Date(r[1])
