@@ -1040,11 +1040,11 @@ hr{border:none;border-top:1px solid #FCE4EC;margin:.9rem 0}
     <div class="ins-section-lbl">📁 서류제출 / 협회등록</div>
     <div class="ins-row-3">
       <label class="ins-chip"><input type="checkbox" value="동양생명" onchange="onInsCk(this)"><span class="ibox"></span><span class="itxt">동양생명</span></label>
-      <label class="ins-chip"><input type="checkbox" value="라이나생명" onchange="onInsCk(this)"><span class="ibox"></span><span class="itxt">라이나생명</span></label>
       <label class="ins-chip"><input type="checkbox" value="처브라이프" onchange="onInsCk(this)"><span class="ibox"></span><span class="itxt">처브라이프</span></label>
     </div>
     <div class="ins-section-lbl">✍️ 전자서명</div>
     <div class="ins-grid-4">
+      <label class="ins-chip"><input type="checkbox" value="라이나생명" onchange="onInsCk(this)"><span class="ibox"></span><span class="itxt">라이나생명</span></label>
       <label class="ins-chip"><input type="checkbox" value="흥국생명" onchange="onInsCk(this)"><span class="ibox"></span><span class="itxt">흥국생명</span></label>
       <label class="ins-chip"><input type="checkbox" value="미래에셋" onchange="onInsCk(this)"><span class="ibox"></span><span class="itxt">미래에셋</span></label>
       <label class="ins-chip"><input type="checkbox" value="한화생명" onchange="onInsCk(this)"><span class="ibox"></span><span class="itxt">한화생명</span></label>
@@ -1191,6 +1191,23 @@ hr{border:none;border-top:1px solid #FCE4EC;margin:.9rem 0}
   </div>
 </div>
 
+<!-- 위촉준비 탭: 생명 선택 시 동양생명 서류 요청 안내 -->
+<div class="popup-bg" id="dongyang-req-modal">
+  <div class="popup-box">
+    <div class="popup-head" style="background:linear-gradient(135deg,var(--accent),#F06292)">
+      <div class="p-icon">🌸</div>
+      <div class="p-title">동양생명 서류는 따로 요청</div>
+    </div>
+    <div class="popup-body">
+      <div class="dy-msg">
+        생명 위촉 시 <span class="hl">동양생명 서류는<br>개별로 요청</span>해 주셔야 해요.<br><br>
+        담당자에게 <span class="hl">이름 · 주민번호 · 주소</span>를<br>말씀해 주세요.
+      </div>
+      <button class="dy-confirm" onclick="document.getElementById('dongyang-req-modal').classList.remove('show')">확인</button>
+    </div>
+  </div>
+</div>
+
 <!-- 완료 팝업 -->
 <div class="popup-bg" id="done-popup">
   <div class="popup-box">
@@ -1263,7 +1280,7 @@ const SAENGBO = {
     {round:'2차',deadline:'10/1',wichok:'10/14'},
     {round:'3차',deadline:'10/12',wichok:'10/21'}
   ]},
-  라이나생명:{type:'서류제출',schedules:[
+  라이나생명:{type:'전자서명',schedules:[
     {round:'1차',deadline:'9/17',wichok:'10/5'},
     {round:'2차',deadline:'9/22',wichok:'10/12'},
     {round:'3차',deadline:'10/1',wichok:'10/19'},
@@ -1391,6 +1408,8 @@ function selectWtype(v) {
   document.querySelectorAll('.wtype-btn').forEach(b => b.classList.remove('sel'));
   document.getElementById('wt-'+v).classList.add('sel');
   tryBuild();
+  // 생명 포함 구분 선택 시 동양생명 서류 요청 팝업
+  if (v.includes('생')) document.getElementById('dongyang-req-modal').classList.add('show');
 }
 
 function selectCareer(v) {
@@ -1716,16 +1735,7 @@ function fmtS(str) { return str.replace(/[()]/g,'').trim(); }
 function renderSaengbo(input, ins) {
   const data = SAENGBO[ins];
   if (!data) return '';
-  if (data.type !== '전자서명') {
-    const upcoming = data.schedules.filter(s => parseD(s.deadline) >= input);
-    if (!upcoming.length) return `<div class="no-res"><div class="em">📅</div><div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px">${ins}</div><div style="font-size:12px;color:var(--text2);line-height:1.8">10월 일정이 아직 공개되지 않았어요.<br>곧 업데이트 예정이니 조금만 기다려 주세요! 😊</div></div>`;
-    const s = upcoming[0];
-    return `<div class="rc primary" style="display:flex;gap:20px;align-items:center;flex-wrap:wrap">
-      <div class="rc-badge" style="align-self:flex-start">🟢 ${s.round}</div>
-      <div class="rc-item" style="flex:1"><div class="rc-label">서류 마감</div><div class="rc-val">${fmtS(s.deadline)}</div></div>
-      <div class="rc-item" style="flex:1"><div class="rc-label">위촉일</div><div class="rc-val green">${fmtS(s.wichok)}</div></div>
-    </div>`;
-  }
+  // 모든 보험사: 이번 회차 + 앞 회차 함께 표시
   const upcoming = data.schedules.filter(s => parseD(s.deadline) >= input);
   if (!upcoming.length) return `<div class="no-res"><div class="em">📅</div><div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px">${ins}</div><div style="font-size:12px;color:var(--text2);line-height:1.8">10월 일정이 아직 공개되지 않았어요.<br>곧 업데이트 예정이니 조금만 기다려 주세요! 😊</div></div>`;
   const c1 = upcoming[0];
