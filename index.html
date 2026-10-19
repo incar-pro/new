@@ -1032,6 +1032,10 @@ hr{border:none;border-top:1px solid #FCE4EC;margin:.9rem 0}
     <div class="date-wrap"><span class="date-icon">📅</span><input type="date" class="date-input" id="dateInput" onchange="runSearch()"></div>
     <div style="margin-top:8px;font-size:11px;color:var(--text3)">접수일 기준으로 가능한 회차를 안내해드려요.</div>
   </div>
+  <div class="card" id="kliaCard" style="display:none">
+    <div class="card-title">🏛️ 생명보험협회 등록 일정 <span style="font-weight:400;color:var(--text3)">(동양생명 일정 기준)</span></div>
+    <div id="kliaList"></div>
+  </div>
   <div class="card" id="insurerCard" style="display:none">
     <div class="ins-header">
       <div class="card-title" style="margin-bottom:0">보험사 선택 <span style="font-weight:400;color:var(--text3)">(복수 선택)</span></div>
@@ -1634,6 +1638,7 @@ function setQueryType(type) {
   document.getElementById('qtoggle-손보').className = 'q-btn' + (type==='손보' ? ' active-손보' : '');
   document.getElementById('qtoggle-생보').className = 'q-btn' + (type==='생보' ? ' active-생보' : '');
   document.getElementById('insurerCard').style.display = type==='생보' ? 'block' : 'none';
+  document.getElementById('kliaCard').style.display = type==='생보' ? 'block' : 'none';
   runSearch();
 }
 
@@ -1665,8 +1670,9 @@ function getSelectedInsurers() {
 
 function runSearch() {
   const val = document.getElementById('dateInput').value;
-  if (!val) return;
+  if (!val) { renderKlia(null); return; }
   const input = new Date(val + 'T00:00:00');
+  renderKlia(input);
   const res = document.getElementById('searchResult');
   if (queryType === '손보') {
     res.innerHTML = renderSonbo(input);
@@ -1730,6 +1736,36 @@ function parseD(str) {
 
 function fmtS(str) { return str.replace(/[()]/g,'').trim(); }
 
+// 등록된 일정의 마지막 마감월 다음 달 (예: 마지막 마감 10/12 → 11)
+function nextMonthOf(schedules) {
+  const last = schedules[schedules.length-1];
+  const m = parseInt(String(last.deadline).split('/')[0], 10);
+  return m === 12 ? 1 : m + 1;
+}
+
+// ── 생명보험협회 등록 일정 (동양생명 일정 기준) ──
+function renderKlia(input) {
+  const box = document.getElementById('kliaList');
+  if (!box) return;
+  const list = (SAENGBO['동양생명'] || {}).schedules || [];
+  const upIdx = input ? list.findIndex(s => parseD(s.deadline) >= input) : -1;
+  const prevIdx = input ? (upIdx === -1 ? list.length - 1 : upIdx - 1) : -1;
+  let html = `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;font-size:11px;font-weight:700;color:var(--text3);padding:0 10px 6px;border-bottom:1px dashed var(--border)">
+    <div>회차</div><div style="text-align:center">서류 마감</div><div style="text-align:right">협회 등록일</div></div>`;
+  html += list.map((s, i) => {
+    const tag = i === upIdx ? '🟢 이번' : (i === prevIdx ? '🔵 앞' : '');
+    const hl = i === upIdx ? 'background:var(--accent-s);border-radius:8px;' : '';
+    return `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;font-size:13px;padding:9px 10px;${hl}border-bottom:1px solid var(--border)">
+      <div style="font-weight:600;color:var(--text)">${s.round}${tag ? ` <span style="font-size:10.5px;font-weight:700;color:var(--text2)">${tag}</span>` : ''}</div>
+      <div style="text-align:center;color:var(--text)">${fmtS(s.deadline)}</div>
+      <div style="text-align:right;font-weight:700;color:#00A86B">${fmtS(s.wichok)}</div></div>`;
+  }).join('');
+  if (input && upIdx === -1 && list.length) {
+    html += `<div style="margin-top:10px;font-size:11.5px;color:var(--text2);line-height:1.7">📅 ${nextMonthOf(list)}월 협회 등록 일정은 아직 공개되지 않았어요. 곧 업데이트 예정이에요!</div>`;
+  }
+  box.innerHTML = html;
+}
+
 // SAENGBO 데이터는 상단 일정 관리 섹션을 확인하세요
 
 function renderSaengbo(input, ins) {
@@ -1737,10 +1773,18 @@ function renderSaengbo(input, ins) {
   if (!data) return '';
   // 모든 보험사: 이번 회차 + 앞 회차 함께 표시
   const upcoming = data.schedules.filter(s => parseD(s.deadline) >= input);
-  if (!upcoming.length) return `<div class="no-res"><div class="em">📅</div><div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px">${ins}</div><div style="font-size:12px;color:var(--text2);line-height:1.8">10월 일정이 아직 공개되지 않았어요.<br>곧 업데이트 예정이니 조금만 기다려 주세요! 😊</div></div>`;
-  const c1 = upcoming[0];
   const passed = data.schedules.filter(s => parseD(s.deadline) < input);
   const c2 = passed.length ? passed[passed.length-1] : null;
+  if (!upcoming.length) {
+    const nm = nextMonthOf(data.schedules);
+    return `<div class="no-res" style="padding:18px 0"><div class="em">📅</div><div style="font-size:12px;color:var(--text2);line-height:1.8">${nm}월 일정이 아직 공개되지 않았어요.<br>곧 업데이트 예정이니 조금만 기다려 주세요! 😊</div></div>
+    ${c2 ? `<div class="rc secondary"><div class="rc-badge">🔵 앞 회차 · ${c2.round}</div>
+      <div class="rc-item"><div class="rc-label">서류 마감</div><div class="rc-val">${fmtS(c2.deadline)}</div></div>
+      ${c2.urlSend ? `<div class="rc-item"><div class="rc-label">URL 발송</div><div class="rc-val amber">${fmtS(c2.urlSend)}</div></div>` : ''}
+      <div class="rc-item"><div class="rc-label">위촉일</div><div class="rc-val green">${fmtS(c2.wichok)}</div></div>
+    </div>` : ''}`;
+  }
+  const c1 = upcoming[0];
   return `<div class="alert warn">📌 서류 제출 시점의 위촉일을 확인해 주세요.<br>앞 회차에 접수되었을 가능성도 있으므로, 해당 회차와 앞 회차를 모두 확인해 주시기 바랍니다.</div>
   <div class="result-pair">
     <div class="rc primary"><div class="rc-badge">🟢 이번 회차 · ${c1.round}</div>
@@ -2317,6 +2361,7 @@ function dlPdf(bytes,filename){
 }
 
 
+document.addEventListener('DOMContentLoaded', () => { try { runSearch(); } catch(e) { renderKlia(null); } });
 </script>
 </body>
 </html>
