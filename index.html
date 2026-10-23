@@ -1699,13 +1699,13 @@ function fmtFull(d) {
 function renderSonbo(input) {
   // 날짜만 비교 (시간 제거)
   const inputD = new Date(input.getFullYear(), input.getMonth(), input.getDate());
-  const passed = SONBO.filter(s => {
-    const d = new Date(s.deadline.getFullYear(), s.deadline.getMonth(), s.deadline.getDate());
-    return d <= inputD;
-  });
-  if (!passed.length) return `<div class="no-res"><div class="em">📭</div>해당 일자 이전 손보 일정이 없어요.</div>`;
-  const idx = passed.length - 1;
-  const c = passed[idx];
+  // 이번 회차 = 접수일 당일 또는 그 이후 가장 빠른 마감 (생보와 동일한 기준)
+  const dOnly = s => new Date(s.deadline.getFullYear(), s.deadline.getMonth(), s.deadline.getDate());
+  const future = SONBO.filter(s => dOnly(s) >= inputD);
+  const passed = SONBO.filter(s => dOnly(s) < inputD);
+  if (!future.length) return `<div class="no-res"><div class="em">📭</div>해당 일자 이후 손보 일정이 아직 없어요.</div>`;
+  const c = future[0];
+  const prev = passed.length ? passed[passed.length - 1] : null;
 
   // 이번 회차
   let html = `<div class="rc primary" style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
@@ -1714,8 +1714,17 @@ function renderSonbo(input) {
     <div class="rc-item" style="flex:1"><div class="rc-label">위촉일 (= 코드 개시)</div><div class="rc-val green">${fmtFull(c.wichok)}</div></div>
   </div>`;
 
-  // 앞으로 5개 회차
-  const upcoming = SONBO.filter(s => new Date(s.deadline.getFullYear(), s.deadline.getMonth(), s.deadline.getDate()) > inputD).slice(0, 5);
+  // 앞 회차 (바로 직전 마감)
+  if (prev) {
+    html += `<div class="rc secondary" style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-bottom:8px">
+    <div class="rc-badge" style="align-self:flex-start">🔵 앞 회차</div>
+    <div class="rc-item" style="flex:1"><div class="rc-label">서류 마감</div><div class="rc-val">${fmtFull(prev.deadline)}</div></div>
+    <div class="rc-item" style="flex:1"><div class="rc-label">위촉일</div><div class="rc-val green">${fmtFull(prev.wichok)}</div></div>
+  </div>`;
+  }
+
+  // 앞으로 5개 회차 (이번 회차 다음부터)
+  const upcoming = future.slice(1, 6);
   if (upcoming.length) {
     html += `<div style="font-size:11.5px;font-weight:700;color:var(--text2);margin:12px 0 6px;letter-spacing:.3px">📆 다음 회차 일정</div>`;
     html += upcoming.map((s, i) => `
@@ -2117,239 +2126,174 @@ async function fillAndDownload(buf, mode, data, today){
 }
 
 
-// ── 동그라미 그리기 (아니오 표시) ──
-async function drawCircle(pdfDoc, page, cx, cy, r) {
-  const canvas = document.createElement('canvas');
-  const size = r * 4;
-  canvas.width = size; canvas.height = size;
-  const ctx = canvas.getContext('2d');
-  ctx.beginPath();
-  ctx.arc(size/2, size/2, r*1.5, 0, Math.PI*2);
-  ctx.strokeStyle = '#000';
-  ctx.lineWidth = 1.5;
-  ctx.stroke();
-  const b64 = canvas.toDataURL('image/png').split(',')[1];
-  const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
-  const img = await pdfDoc.embedPng(bytes);
-  page.drawImage(img, {x: cx-size/2*0.72, y: cy-size/2*0.72, width: size*0.72, height: size*0.72});
-}
 
 // ── 한글 텍스트 → 이미지 삽입 ──
-async function drawText(pdfDoc, page, text, x, pdfY, fontSize){
-  if (!text) return;
+// ── 서류 자동입력: 선명하게 그리기 ──
+// 글자는 4배 해상도로 그려서 붙이고, 체크(✓)와 동그라미는 벡터 선으로 그림
+const TXT_SCALE = 4;
+async function putText(pdfDoc, page, text, x, cy, size, align) {
+  if (text === undefined || text === null || text === '') return;
+  text = String(text);
+  const S = TXT_SCALE;
+  const font = `${size * S}px "Malgun Gothic","맑은 고딕","Apple SD Gothic Neo",sans-serif`;
   const canvas = document.createElement('canvas');
-  const ctx    = canvas.getContext('2d');
-  const fStr   = `${fontSize*1.35}px "Apple SD Gothic Neo","Malgun Gothic",sans-serif`;
-  ctx.font = fStr;
-  const w = Math.ceil(ctx.measureText(text).width)+6;
-  const h = Math.ceil(fontSize*2);
-  canvas.width=w; canvas.height=h;
-  ctx.font=fStr; ctx.fillStyle='#000'; ctx.fillText(text,2,fontSize*1.3);
-  const b64   = canvas.toDataURL('image/png').split(',')[1];
-  const bytes = Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
-  const img   = await pdfDoc.embedPng(bytes);
-  page.drawImage(img,{x, y:pdfY, width:w*0.72, height:h*0.72});
+  const ctx = canvas.getContext('2d');
+  ctx.font = font;
+  const wPx = Math.ceil(ctx.measureText(text).width) + 2 * S;
+  const hPx = Math.ceil(size * 1.6 * S);
+  canvas.width = wPx; canvas.height = hPx;
+  ctx.font = font; ctx.fillStyle = '#000'; ctx.textBaseline = 'middle';
+  ctx.fillText(text, S, hPx / 2);
+  const b64 = canvas.toDataURL('image/png').split(',')[1];
+  const img = await pdfDoc.embedPng(Uint8Array.from(atob(b64), c => c.charCodeAt(0)));
+  const w = wPx / S, h = hPx / S, H = page.getHeight();
+  const left = align === 'R' ? x - w + 1 : x - 1;
+  page.drawImage(img, { x: left, y: H - cy - h / 2, width: w, height: h });
+}
+function putCheck(page, cx, cy) {
+  const y = page.getHeight() - cy;
+  const o = { thickness: 1.5, color: PDFLib.rgb(0, 0, 0) };
+  page.drawLine({ start: { x: cx - 3.6, y: y + 0.4 }, end: { x: cx - 1, y: y - 3 }, ...o });
+  page.drawLine({ start: { x: cx - 1, y: y - 3 }, end: { x: cx + 4.5, y: y + 4.5 }, ...o });
+}
+function putCircle(page, cx, cy) {
+  page.drawEllipse({ x: cx, y: page.getHeight() - cy, xScale: 17, yScale: 7,
+    borderColor: PDFLib.rgb(0, 0, 0), borderWidth: 1.2 });
 }
 
-async function drawCheck(pdfDoc,page,x,pdfY){
-  await drawText(pdfDoc,page,'✓',x,pdfY,11);
-}
+// [원본 쪽번호, 종류(T=왼쪽정렬 글자, R=오른쪽정렬 글자, C=체크, O=동그라미), 항목, x, 세로 중심(위에서부터 pt), 글자크기]
+// 좌표는 원본 서류(프로사업단총괄_사용인_위촉신청서)의 칸·□ 위치를 직접 측정해서 맞춘 값
+const FILL_SPEC = [
+  [1,'T','sabun',80,116.5,10],
+  [1,'T','name',138,211.5,11],
+  [1,'T','birth',402,211.5,11],
+  [2,'C',null,441.0,201.3],
+  [2,'C',null,433.7,549.7],
+  [3,'C',null,419.5,165.7],
+  [3,'T','y2',430.4,613.6,10],
+  [3,'R','mm',495.5,613.6,10],
+  [3,'R','dd',540.5,613.6,10],
+  [3,'T','birth',401,655.5,9],
+  [3,'T','phone',401,681.5,9],
+  [3,'T','address',401,694.5,8],
+  [3,'T','name',401,720.5,10],
+  [4,'T','name',196,212.5,11],
+  [4,'T','jumin',196,252,11],
+  [4,'T','zip',245,291.9,10],
+  [4,'T','address',289,291.9,9],
+  [4,'R','y4',330.4,398,10],
+  [4,'R','mm',366.4,398,10],
+  [4,'R','dd',402.4,398,10],
+  [4,'T','name',342,502.1,11],
+  [5,'O',null,526.6,170.5],
+  [5,'O',null,526.6,186.7],
+  [5,'O',null,526.6,202.9],
+  [5,'O',null,526.6,251.5],
+  [5,'O',null,526.6,283.9],
+  [5,'O',null,526.6,332.5],
+  [5,'O',null,526.6,381.1],
+  [5,'O',null,526.6,462.1],
+  [5,'O',null,526.6,494.5],
+  [5,'O',null,526.6,526.9],
+  [5,'O',null,526.6,559.3],
+  [5,'O',null,526.6,607.9],
+  [5,'R','y4',393.2,722.8,10],
+  [5,'R','mm',423.2,722.8,10],
+  [5,'R','dd',453.2,722.8,10],
+  [5,'T','name',336,737,11],
+  [6,'C',null,291.0,93.2],
+  [6,'C',null,295.3,466.2],
+  [7,'C',null,264.3,127.2],
+  [7,'C',null,389.9,689.2],
+  [7,'C',null,389.9,703.2],
+  [7,'C',null,376.6,717.2],
+  [7,'T','y2',230.2,779.4,10],
+  [7,'R','mm',297.8,779.4,10],
+  [7,'R','dd',345.8,779.4,10],
+  [7,'T','name',378,795.5,11],
+  [8,'C',null,269.7,93.2],
+  [8,'C',null,267.4,489.2],
+  [9,'C',null,270.7,134.2],
+  [9,'C',null,382.6,722.2],
+  [9,'C',null,381.2,736.2],
+  [9,'C',null,381.2,750.2],
+  [9,'T','y2',235.9,774.4,10],
+  [9,'R','mm',298.4,774.4,10],
+  [9,'R','dd',346.2,774.4,10],
+  [9,'T','name',375,796.4,11],
+  [10,'C',null,388.5,260.7],
+  [10,'C',null,384.7,709.1],
+  [11,'C',null,390.1,447.2],
+  [12,'T','y2',413.5,392.9,10],
+  [12,'R','mm',463.5,392.9,10],
+  [12,'R','dd',499.5,392.9,10],
+  [12,'T','birth',403,442.5,10],
+  [12,'T','phone',403,471.3,10],
+  [12,'T','address',403,485.8,8],
+  [12,'T','name',403,514.6,11],
+  [13,'T','sabun',71,145.6,10],
+  [13,'T','name',131,235.8,11],
+  [13,'T','birth',342,235.8,11],
+  [14,'C',null,441.0,201.3],
+  [14,'C',null,433.7,549.7],
+  [15,'C',null,419.5,165.7],
+  [15,'T','y2',430.4,613.6,10],
+  [15,'R','mm',495.5,613.6,10],
+  [15,'R','dd',540.5,613.6,10],
+  [15,'T','birth',401,655.5,9],
+  [15,'T','phone',401,681.5,9],
+  [15,'T','address',401,694.5,8],
+  [15,'T','name',401,720.5,10],
+  [16,'T','name',395,216,11],
+  [16,'R','jumin1',223,235.9,11],
+  [16,'T','jumin2',237,235.9,11],
+  [16,'T','phone',395,235.9,11],
+  [16,'T','y2',229.3,756.9,10],
+  [16,'R','mm',277.7,756.9,10],
+  [16,'R','dd',314.4,756.9,10],
+  [16,'T','name',400,756.9,11],
+  [17,'C',null,495.5,690.7],
+  [17,'C',null,495.5,740.7],
+  [18,'C',null,495.5,238.6],
+  [19,'C',null,495.7,381.0],
+  [19,'C',null,495.7,423.5],
+  [19,'C',null,485.7,671.7],
+  [20,'C',null,485.7,676.3],
+  [20,'C',null,485.7,717.4],
+  [21,'C',null,485.7,160.1],
+  [21,'T','y2',208.4,216.5,12],
+  [21,'R','mm',314.8,216.5,12],
+  [21,'R','dd',386.2,216.5,12],
+  [21,'T','name',360,277.1,12],
+  [22,'C',null,204.6,248.1],
+  [23,'C',null,85.2,319.5],
+  [25,'C',null,85.2,234.6],
+  [26,'C',null,85.2,173.1],
+  [26,'T','y2',440.4,221.8,10],
+  [26,'R','mm',490.4,221.8,10],
+  [26,'R','dd',526.4,221.8,10],
+  [26,'T','birth',412,294.7,10],
+  [26,'T','phone',412,340.5,10],
+  [26,'T','address',412,363.4,8],
+  [26,'T','name',412,409.2,11]
+];
 
-const PH = 841.89;
-function ty(top,size){ return PH-top-(size||9)*1.5; }
-
-async function fillSon(pdfDoc, pages, d, today) {
-  if (pages[0]) {  // p1
-    const p = pages[0];
-    await drawText(pdfDoc, p, d.sabun, 80.0, 718.8, 9);
-    await drawText(pdfDoc, p, d.name, 139.4, 620.1, 9);
-    await drawText(pdfDoc, p, d.birth, 402.2, 620.9, 9);
-  }
-  if (pages[1]) {  // p2
-    const p = pages[1];
-    await drawCheck(pdfDoc, p, 438.1, 637.1);  // 동의함1
-    await drawCheck(pdfDoc, p, 430.0, 288.6);  // 동의함2
-  }
-  if (pages[2]) {  // p3
-    const p = pages[2];
-    await drawCheck(pdfDoc, p, 415.2, 671.9);  // 1동의함
-    await drawText(pdfDoc, p, today.y2, 432.1, 223.1, 9);  // 2년
-    await drawText(pdfDoc, p, today.mm, 473.0, 222.3, 9);  // 3월
-    await drawText(pdfDoc, p, today.dd, 513.1, 221.6, 9);  // 4일
-    await drawText(pdfDoc, p, d.birth, 403.2, 179.6, 8);  // 5생년월일
-    await drawText(pdfDoc, p, d.phone, 404.4, 154.1, 8);  // 6폰번호
-    await drawText(pdfDoc, p, d.address, 404.0, 139.9, 7);  // 7주소
-    await drawText(pdfDoc, p, d.name, 406.6, 115.9, 9);  // 8이름
-  }
-  if (pages[3]) {  // p4
-    const p = pages[3];
-    await drawText(pdfDoc, p, d.name, 195.1, 618.0, 9);  // 성명 (위로)
-    await drawText(pdfDoc, p, d.jumin, 194.4, 578.0, 9);  // 주민번호 (위로)
-    await drawText(pdfDoc, p, d.zip, 245.8, 541.2, 8);  // 1우편번호
-    await drawText(pdfDoc, p, d.address, 289.2, 541.2, 7);  // 2주소 (우편번호 라인)
-    await drawText(pdfDoc, p, today.y4, 294.9, 440.0, 9);  // 3년 (위로)
-    await drawText(pdfDoc, p, today.mm, 346.2, 440.0, 9);  // 4월 (위로)
-    await drawText(pdfDoc, p, today.dd, 381.5, 440.0, 9);  // 5일 (위로)
-    await drawText(pdfDoc, p, d.name, 341.4, 333.0, 9);  // 신청인 (위로)
-  }
-  if (pages[4]) {  // p5
-    const p = pages[4];
-    // 아니오 동그라미 12개
-    await drawCircle(pdfDoc, p, 524.2, 673.3, 7);
-    await drawCircle(pdfDoc, p, 526.5, 656.8, 7);
-    await drawCircle(pdfDoc, p, 528.4, 635.0, 7);
-    await drawCircle(pdfDoc, p, 523.5, 587.1, 7);
-    await drawCircle(pdfDoc, p, 528.4, 556.8, 7);
-    await drawCircle(pdfDoc, p, 523.5, 507.4, 7);
-    await drawCircle(pdfDoc, p, 526.5, 459.7, 7);
-    await drawCircle(pdfDoc, p, 527.6, 378.8, 7);
-    await drawCircle(pdfDoc, p, 524.2, 345.7, 7);
-    await drawCircle(pdfDoc, p, 527.2, 316.3, 7);
-    await drawCircle(pdfDoc, p, 531.0, 280.7, 7);
-    await drawCircle(pdfDoc, p, 525.8, 232.0, 7);
-    await drawText(pdfDoc, p, today.y4, 351.9, 111.3, 9);  // 1년
-    await drawText(pdfDoc, p, today.mm, 409.2, 112.0, 9);  // 2월
-    await drawText(pdfDoc, p, today.dd, 441.5, 113.1, 9);  // 3일
-    await drawText(pdfDoc, p, d.name, 341.8, 96.0, 9);  // 4이름 (위로)
-  }
-  if (pages[5]) {  // p6
-    const p = pages[5];
-    await drawCheck(pdfDoc, p, 286.2, 744.6);
-    await drawCheck(pdfDoc, p, 290.8, 371.2);
-  }
-  if (pages[6]) {  // p7
-    const p = pages[6];
-    await drawCheck(pdfDoc, p, 259.0, 707.7);  // 1동의함
-    await drawCheck(pdfDoc, p, 382.4, 148.5);  // 2동의함
-    await drawCheck(pdfDoc, p, 383.5, 134.6);  // 3동의함
-    await drawCheck(pdfDoc, p, 370.4, 118.5);  // 4동의함
-    await drawText(pdfDoc, p, today.y2, 232.6, 54.0, 9);  // 5년(2자리)
-    await drawText(pdfDoc, p, today.mm, 267.5, 52.5, 9);  // 6월
-    await drawText(pdfDoc, p, today.dd, 320.0, 53.3, 9);  // 7일
-    await drawText(pdfDoc, p, d.name, 395.4, 41.2, 9);  // 8이름
-  }
-  if (pages[7]) {  // p8
-    const p = pages[7];
-    await drawCheck(pdfDoc, p, 264.9, 743.4);
-    await drawCheck(pdfDoc, p, 260.8, 347.0);
-  }
-  if (pages[8]) {  // p9
-    const p = pages[8];
-    await drawCheck(pdfDoc, p, 266.9, 700.5);  // 1동의함
-    await drawCheck(pdfDoc, p, 374.9, 112.9);  // 2동의함
-    await drawCheck(pdfDoc, p, 377.5, 100.5);  // 3동의함
-    await drawCheck(pdfDoc, p, 376.8, 86.6);  // 4동의함
-    await drawText(pdfDoc, p, today.y2, 235.2, 60.0, 9);  // 5년(2자리)
-    await drawText(pdfDoc, p, today.mm, 272.4, 57.0, 9);  // 6월
-    await drawText(pdfDoc, p, today.dd, 326.4, 58.1, 9);  // 7일
-    await drawText(pdfDoc, p, d.name, 390.5, 36.8, 9);  // 8이름
-  }
-  if (pages[9]) {  // p10
-    const p = pages[9];
-    await drawCheck(pdfDoc, p, 380.8, 577.0);
-    await drawCheck(pdfDoc, p, 377.8, 129.0);
-  }
-  if (pages[10]) {  // p11
-    const p = pages[10];
-    await drawCheck(pdfDoc, p, 381.9, 390.9);
-  }
-  if (pages[11]) {  // p12
-    const p = pages[11];
-    await drawText(pdfDoc, p, today.y2, 417.1, 442.0, 9);  // 1년
-    await drawText(pdfDoc, p, today.mm, 450.9, 440.5, 9);  // 2월
-    await drawText(pdfDoc, p, today.dd, 483.5, 440.9, 9);  // 3일
-    await drawText(pdfDoc, p, d.birth, 419.4, 392.4, 8);  // 4생년월일
-    await drawText(pdfDoc, p, d.phone, 416.8, 362.9, 8);  // 5폰번호
-    await drawText(pdfDoc, p, d.address, 419.0, 347.1, 7);  // 6주소
-    await drawText(pdfDoc, p, d.name, 413.8, 318.2, 9);  // 7이름
-  }
-}
-
-async function fillSaeng(pdfDoc, pages, d, today) {
-  if (pages[0]) {  // p13
-    const p = pages[0];
-    await drawText(pdfDoc, p, d.sabun, 71.0, 689.7, 9);
-    await drawText(pdfDoc, p, d.name, 131.0, 598.5, 9);
-    await drawText(pdfDoc, p, d.birth, 345.5, 595.7, 9);
-  }
-  if (pages[1]) {  // p14
-    const p = pages[1];
-    await drawCheck(pdfDoc, p, 432.2, 634.1);  // 동의함1
-    await drawCheck(pdfDoc, p, 425.9, 286.9);  // 동의함2
-  }
-  if (pages[2]) {  // p15
-    const p = pages[2];
-    await drawCheck(pdfDoc, p, 415, 670.4);  // ①동의함
-    await drawText(pdfDoc, p, today.y2, 431, 222.3, 9);  // ②년
-    await drawText(pdfDoc, p, today.mm, 469, 223.5, 9);  // ③월
-    await drawText(pdfDoc, p, today.dd, 515, 222.7, 9);  // ④일
-    await drawText(pdfDoc, p, d.birth,   419, 180.3, 8);  // ⑤생년월일
-    await drawText(pdfDoc, p, d.phone,   408, 154.8, 8);  // ⑥폰번호
-    await drawText(pdfDoc, p, d.address, 412, 142.1, 7);  // ⑦주소
-    await drawText(pdfDoc, p, d.name,    411, 113.2, 9);  // ⑧이름
-  }
-  if (pages[3]) {  // p16
-    const p = pages[3];
-    await drawText(pdfDoc, p, d.name, 399.9, 620.3, 9);
-    await drawText(pdfDoc, p, d.jumin, 155.4, 598.9, 9);
-    await drawText(pdfDoc, p, d.phone, 396.5, 599.2, 9);
-    await drawText(pdfDoc, p, today.y2, 231.5, 80.8, 9);  // 1년
-    await drawText(pdfDoc, p, today.mm, 262.6, 80.8, 9);  // 2월 (줄맞춤)
-    await drawText(pdfDoc, p, today.dd, 296.0, 80.8, 9);  // 3일 (줄맞춤)
-    await drawText(pdfDoc, p, d.name,   402.1, 81.7, 9);  // 4이름
-  }
-  if (pages[4]) {  // p17
-    const p = pages[4];
-    await drawCheck(pdfDoc, p, 489.6, 146.7);  // 1체크
-    await drawCheck(pdfDoc, p, 489.2, 95.3);  // 2체크
-  }
-  if (pages[5]) {  // p18
-    const p = pages[5];
-    await drawCheck(pdfDoc, p, 491.4, 598.1);
-  }
-  if (pages[6]) {  // p19
-    const p = pages[6];
-    await drawCheck(pdfDoc, p, 493.6, 458.6);
-    await drawCheck(pdfDoc, p, 492.5, 412.6);
-    await drawCheck(pdfDoc, p, 479.8, 164.2);
-  }
-  if (pages[7]) {  // p20
-    const p = pages[7];
-    await drawCheck(pdfDoc, p, 480.1, 161.7);
-    await drawCheck(pdfDoc, p, 480.5, 121.3);
-  }
-  if (pages[8]) {  // p21
-    const p = pages[8];
-    await drawCheck(pdfDoc, p, 477.8, 675.9);  // 1동의함
-    await drawText(pdfDoc, p, today.y2, 214.6, 614.7, 9);  // 2년
-    await drawText(pdfDoc, p, today.mm, 274.2, 614.7, 9);  // 3월 (줄맞춤)
-    await drawText(pdfDoc, p, today.dd, 344.8, 614.7, 9);  // 4일 (줄맞춤)
-    await drawText(pdfDoc, p, d.name,   365.0, 562.0, 9);  // 5이름 (위로)
-  }
-  if (pages[9]) {  // p22
-    const p = pages[9];
-    await drawCheck(pdfDoc, p, 198.2, 585.4);  // 1체크
-  }
-  if (pages[10]) {  // p23
-    const p = pages[10];
-    await drawCheck(pdfDoc, p, 77.4, 517.3);
-  }
-  if (pages[12]) {  // p25
-    const p = pages[12];
-    await drawCheck(pdfDoc, p, 80.4, 602.5);
-  }
-  if (pages[13]) {  // p26
-    const p = pages[13];
-    await drawCheck(pdfDoc, p, 75.6, 662.9);   // 1동의함
-    await drawText(pdfDoc, p, today.y2, 439.6, 612.3, 9);  // 2년
-    await drawText(pdfDoc, p, today.mm, 474.5, 612.3, 9);  // 3월
-    await drawText(pdfDoc, p, today.dd, 514.2, 612.3, 9);  // 4일
-    await drawText(pdfDoc, p, d.birth,   417.5, 536.1, 8);
-    await drawText(pdfDoc, p, d.phone,   417.9, 491.1, 8);
-    await drawText(pdfDoc, p, d.address, 408.5, 465.6, 7);
-    await drawText(pdfDoc, p, d.name,    409.2, 419.9, 9);
+async function applySpec(pdfDoc, pages, d, today, from, to) {
+  const j = String(d.jumin || '').split('-');
+  const v = { sabun: d.sabun, name: d.name, birth: d.birth, phone: d.phone, address: d.address,
+    zip: d.zip, jumin: d.jumin, jumin1: j[0] || '', jumin2: j[1] || '',
+    y2: today.y2, y4: today.y4, mm: today.mm, dd: today.dd };
+  for (const [pg, kind, key, x, cy, size] of FILL_SPEC) {
+    if (pg < from || pg > to) continue;
+    const page = pages[pg - from];
+    if (!page) continue;
+    if (kind === 'C') putCheck(page, x, cy);
+    else if (kind === 'O') putCircle(page, x, cy);
+    else await putText(pdfDoc, page, v[key], x, cy, size, kind);
   }
 }
+async function fillSon(pdfDoc, pages, d, today)   { await applySpec(pdfDoc, pages, d, today, 1, 12); }
+async function fillSaeng(pdfDoc, pages, d, today) { await applySpec(pdfDoc, pages, d, today, 13, 26); }
 
 // ── 다운로드 ──
 function dlPdf(bytes,filename){
