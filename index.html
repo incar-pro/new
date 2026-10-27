@@ -971,6 +971,18 @@ hr{border:none;border-top:1px solid #FCE4EC;margin:.9rem 0}
 .q-btn.active-손보,.q-btn.active-생보{border-color:var(--accent);background:#FFF6F9;color:var(--accent)}
 .nt-head{background:#F7F5F6}
 .ins-head{border-bottom-color:var(--border)}
+
+/* ── URL 동의 강조 ── */
+.hu-label{display:block;font-size:16px;font-weight:800;color:var(--accent);background:none;border:none;border-left:4px solid var(--accent);padding:1px 0 1px 9px;border-radius:0;margin-top:14px;margin-bottom:4px;cursor:default;user-select:text}
+.hu-period{font-size:26px;font-weight:800;color:var(--text);letter-spacing:-.5px;line-height:1.25;margin-top:2px}
+.hu-to{color:var(--accent)}
+.hu-note{font-size:12px;color:var(--text2);margin-top:2px}
+.dd{display:inline-block;font-size:12.5px;font-weight:800;padding:4px 10px;border-radius:20px}
+.dd-ok{background:#E8F7F0;color:#047857}
+.dd-warn{background:#FFF4DC;color:#B45309}
+.dd-red{background:#FDE2E2;color:#C81E1E}
+.dd-past{background:#F1EEEF;color:#8A7A80}
+@media (max-width:480px){.hu-period{font-size:22px}}
 </style>
 </head>
 <body>
@@ -1349,100 +1361,158 @@ const SAENGBO = {
     {round:'11월 3차',deadline:'11/10',wichok:'11/19'}
   ]},
   라이나생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/17',wichok:'10/5'},
-    {round:'2차',deadline:'9/22',wichok:'10/12'},
-    {round:'3차',deadline:'10/1',wichok:'10/19'},
-    {round:'4차',deadline:'10/12',wichok:'10/26'}
+    {round:'10월 1차',deadline:'9/17',wichok:'10/5'},
+    {round:'10월 2차',deadline:'9/22',wichok:'10/12'},
+    {round:'10월 3차',deadline:'10/1',wichok:'10/19'},
+    {round:'10월 4차',deadline:'10/12',wichok:'10/26'},
+    {round:'11월 1차',deadline:'10/26',wichok:'11/9',urlSend:'11/3',agreeEnd:'11/5'},
+    {round:'11월 2차',deadline:'11/2',wichok:'11/16',urlSend:'11/10',agreeEnd:'11/12'},
+    {round:'11월 3차',deadline:'11/9',wichok:'11/23',urlSend:'11/17',agreeEnd:'11/19'},
+    {round:'11월 4차',deadline:'11/16',wichok:'11/30',urlSend:'11/24',agreeEnd:'11/26'}
   ]},
   처브라이프:{type:'서류제출',schedules:[
-    {round:'1차',deadline:'9/17',wichok:'10/6'},
-    {round:'2차',deadline:'9/29',wichok:'10/15'},
-    {round:'3차',deadline:'10/12',wichok:'10/26'}
+    {round:'10월 1차',deadline:'9/17',wichok:'10/6'},
+    {round:'10월 2차',deadline:'9/29',wichok:'10/15'},
+    {round:'10월 3차',deadline:'10/12',wichok:'10/26'},
+    {round:'11월 1차',deadline:'10/22',wichok:'11/5'},
+    {round:'11월 2차',deadline:'11/2',wichok:'11/16'},
+    {round:'11월 3차',deadline:'11/11',wichok:'11/25'}
   ]},
   흥국생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/18',wichok:'10/6',urlSend:'9/23'},
-    {round:'2차',deadline:'10/1',wichok:'10/15',urlSend:'10/7'},
-    {round:'3차',deadline:'10/14',wichok:'10/26',urlSend:'10/19'}
+    {round:'10월 1차',deadline:'9/18',wichok:'10/6',urlSend:'9/23'},
+    {round:'10월 2차',deadline:'10/1',wichok:'10/15',urlSend:'10/7'},
+    {round:'10월 3차',deadline:'10/14',wichok:'10/26',urlSend:'10/19'},
+    {round:'11월 1차',deadline:'10/23',wichok:'11/5',urlSend:'10/28',agreeEnd:'10/29'},
+    {round:'11월 2차',deadline:'11/3',wichok:'11/16',urlSend:'11/6',agreeEnd:'11/9'},
+    {round:'11월 3차',deadline:'11/12',wichok:'11/25',urlSend:'11/17',agreeEnd:'11/18'}
   ]},
   미래에셋:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/28',wichok:'10/8',urlSend:'10/2'},
-    {round:'2차',deadline:'10/1',wichok:'10/15',urlSend:'10/8'},
-    {round:'3차',deadline:'10/12',wichok:'10/26',urlSend:'10/16'}
+    {round:'10월 1차',deadline:'9/28',wichok:'10/8',urlSend:'10/2'},
+    {round:'10월 2차',deadline:'10/1',wichok:'10/15',urlSend:'10/8'},
+    {round:'10월 3차',deadline:'10/12',wichok:'10/26',urlSend:'10/16'},
+    {round:'11월 1차',deadline:'10/26',wichok:'11/9',urlSend:'10/30',agreeEnd:'11/2'},
+    {round:'11월 2차',deadline:'11/2',wichok:'11/17',urlSend:'11/6',agreeEnd:'11/9'},
+    {round:'11월 3차',deadline:'11/10',wichok:'11/25',urlSend:'11/16',agreeEnd:'11/19'}
   ]},
   한화생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/16',wichok:'10/6',urlSend:'9/22'},
-    {round:'2차',deadline:'9/29',wichok:'10/15',urlSend:'10/6'},
-    {round:'3차',deadline:'10/8',wichok:'10/26',urlSend:'10/15'}
+    {round:'10월 1차',deadline:'9/16',wichok:'10/6',urlSend:'9/22'},
+    {round:'10월 2차',deadline:'9/29',wichok:'10/15',urlSend:'10/6'},
+    {round:'10월 3차',deadline:'10/8',wichok:'10/26',urlSend:'10/15'},
+    {round:'11월 1차',deadline:'10/20',wichok:'11/4',urlSend:'10/26',agreeEnd:'11/1'},
+    {round:'11월 2차',deadline:'10/29',wichok:'11/16',urlSend:'11/4',agreeEnd:'11/10'},
+    {round:'11월 3차',deadline:'11/10',wichok:'11/24',urlSend:'11/16',agreeEnd:'11/18'}
   ]},
   iM라이프:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/14',wichok:'10/2',urlSend:'9/21'},
-    {round:'2차',deadline:'9/23',wichok:'10/14',urlSend:'10/2'},
-    {round:'3차',deadline:'10/2',wichok:'10/21',urlSend:'10/13'}
+    {round:'10월 1차',deadline:'9/14',wichok:'10/2',urlSend:'9/21'},
+    {round:'10월 2차',deadline:'9/23',wichok:'10/14',urlSend:'10/2'},
+    {round:'10월 3차',deadline:'10/2',wichok:'10/21',urlSend:'10/13'},
+    {round:'11월 1차',deadline:'10/16',wichok:'11/5',urlSend:'10/23',agreeEnd:'10/27'},
+    {round:'11월 2차',deadline:'10/28',wichok:'11/11',urlSend:'11/4',agreeEnd:'11/6'},
+    {round:'11월 3차',deadline:'11/5',wichok:'11/19',urlSend:'11/12',agreeEnd:'11/16'}
   ]},
   교보생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/22',wichok:'10/6',urlSend:'9/29'},
-    {round:'2차',deadline:'10/2',wichok:'10/15',urlSend:'10/8'},
-    {round:'3차',deadline:'10/15',wichok:'10/26',urlSend:'10/20'}
+    {round:'10월 1차',deadline:'9/22',wichok:'10/6',urlSend:'9/29'},
+    {round:'10월 2차',deadline:'10/2',wichok:'10/15',urlSend:'10/8'},
+    {round:'10월 3차',deadline:'10/15',wichok:'10/26',urlSend:'10/20'},
+    {round:'11월 1차',deadline:'10/27',wichok:'11/5',urlSend:'10/30',agreeEnd:'11/2'},
+    {round:'11월 2차',deadline:'11/5',wichok:'11/16',urlSend:'11/10',agreeEnd:'11/11'},
+    {round:'11월 3차',deadline:'11/16',wichok:'11/25',urlSend:'11/19',agreeEnd:'11/20'}
   ]},
   삼성생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/16',wichok:'10/8',urlSend:'9/23'},
-    {round:'2차',deadline:'9/23',wichok:'10/16',urlSend:'10/2'},
-    {round:'3차',deadline:'10/2',wichok:'10/23',urlSend:'10/13'}
+    {round:'10월 1차',deadline:'9/16',wichok:'10/8',urlSend:'9/23'},
+    {round:'10월 2차',deadline:'9/23',wichok:'10/16',urlSend:'10/2'},
+    {round:'10월 3차',deadline:'10/2',wichok:'10/23',urlSend:'10/13'},
+    {round:'11월 1차',deadline:'10/20',wichok:'11/6',urlSend:'10/27',agreeEnd:'10/29'},
+    {round:'11월 2차',deadline:'10/27',wichok:'11/13',urlSend:'11/3',agreeEnd:'11/5'},
+    {round:'11월 3차',deadline:'11/5',wichok:'11/24',urlSend:'11/12',agreeEnd:'11/16'}
   ]},
   KB라이프:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/23',wichok:'10/7'},
-    {round:'2차',deadline:'10/1',wichok:'10/14'},
-    {round:'3차',deadline:'10/12',wichok:'10/21'}
+    {round:'10월 1차',deadline:'9/23',wichok:'10/7'},
+    {round:'10월 2차',deadline:'10/1',wichok:'10/14'},
+    {round:'10월 3차',deadline:'10/12',wichok:'10/21'},
+    {round:'11월 1차',deadline:'11/2',wichok:'11/11',urlSend:'고정링크',agreeEnd:'11/6'},
+    {round:'11월 2차',deadline:'11/9',wichok:'11/18',urlSend:'고정링크',agreeEnd:'11/13'},
+    {round:'11월 3차',deadline:'11/16',wichok:'11/25',urlSend:'고정링크',agreeEnd:'11/20'}
   ]},
   DB생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/23',wichok:'10/14',urlSend:'10/2'},
-    {round:'2차',deadline:'10/1',wichok:'10/21',urlSend:'10/12'},
-    {round:'3차',deadline:'10/12',wichok:'10/28',urlSend:'10/19'}
+    {round:'10월 1차',deadline:'9/23',wichok:'10/14',urlSend:'10/2'},
+    {round:'10월 2차',deadline:'10/1',wichok:'10/21',urlSend:'10/12'},
+    {round:'10월 3차',deadline:'10/12',wichok:'10/28',urlSend:'10/19'},
+    {round:'11월 1차',deadline:'10/27',wichok:'11/11',urlSend:'11/2',agreeEnd:'11/3'},
+    {round:'11월 2차',deadline:'11/3',wichok:'11/18',urlSend:'11/9',agreeEnd:'11/10'},
+    {round:'11월 3차',deadline:'11/10',wichok:'11/25',urlSend:'11/16',agreeEnd:'11/17'}
   ]},
   KDB생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/18',wichok:'10/8',urlSend:'9/29'},
-    {round:'2차',deadline:'9/28',wichok:'10/15',urlSend:'10/6'},
-    {round:'3차',deadline:'10/6',wichok:'10/22',urlSend:'10/14'}
+    {round:'10월 1차',deadline:'9/18',wichok:'10/8',urlSend:'9/29'},
+    {round:'10월 2차',deadline:'9/28',wichok:'10/15',urlSend:'10/6'},
+    {round:'10월 3차',deadline:'10/6',wichok:'10/22',urlSend:'10/14'},
+    {round:'11월 1차',deadline:'10/21',wichok:'11/5',urlSend:'10/28',agreeEnd:'10/30'},
+    {round:'11월 2차',deadline:'10/28',wichok:'11/12',urlSend:'11/4',agreeEnd:'11/6'},
+    {round:'11월 3차',deadline:'11/4',wichok:'11/19',urlSend:'11/11',agreeEnd:'11/13'}
   ]},
   메트라이프:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/21',wichok:'10/6'},
-    {round:'2차',deadline:'10/1',wichok:'10/15'},
-    {round:'3차',deadline:'10/14',wichok:'10/26'}
+    {round:'10월 1차',deadline:'9/21',wichok:'10/6'},
+    {round:'10월 2차',deadline:'10/1',wichok:'10/15'},
+    {round:'10월 3차',deadline:'10/14',wichok:'10/26'},
+    {round:'11월 1차',deadline:'10/26',wichok:'11/5',urlSend:'고정링크',agreeEnd:'10/30'},
+    {round:'11월 2차',deadline:'11/4',wichok:'11/16',urlSend:'고정링크',agreeEnd:'11/10'},
+    {round:'11월 3차',deadline:'11/13',wichok:'11/25',urlSend:'고정링크',agreeEnd:'11/19'}
   ]},
   신한라이프:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/16',wichok:'10/6'},
-    {round:'2차',deadline:'9/28',wichok:'10/15'},
-    {round:'3차',deadline:'10/8',wichok:'10/26'}
+    {round:'10월 1차',deadline:'9/16',wichok:'10/6'},
+    {round:'10월 2차',deadline:'9/28',wichok:'10/15'},
+    {round:'10월 3차',deadline:'10/8',wichok:'10/26'},
+    {round:'11월 1차',deadline:'10/21',wichok:'11/5',urlSend:'고정링크',agreeEnd:'11/4'},
+    {round:'11월 2차',deadline:'10/30',wichok:'11/16',urlSend:'고정링크',agreeEnd:'11/13'},
+    {round:'11월 3차',deadline:'11/10',wichok:'11/25',urlSend:'고정링크',agreeEnd:'11/24'}
   ]},
   푸본현대:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/22',wichok:'10/2',urlSend:'9/29'},
-    {round:'2차',deadline:'10/6',wichok:'10/15',urlSend:'10/12'},
-    {round:'3차',deadline:'10/15',wichok:'10/23',urlSend:'10/20'}
+    {round:'10월 1차',deadline:'9/22',wichok:'10/2',urlSend:'9/29'},
+    {round:'10월 2차',deadline:'10/6',wichok:'10/15',urlSend:'10/12'},
+    {round:'10월 3차',deadline:'10/15',wichok:'10/23',urlSend:'10/20'},
+    {round:'11월 1차',deadline:'10/28',wichok:'11/5',urlSend:'11/2',agreeEnd:'11/3'},
+    {round:'11월 2차',deadline:'11/5',wichok:'11/13',urlSend:'11/10',agreeEnd:'11/11'},
+    {round:'11월 3차',deadline:'11/17',wichok:'11/25',urlSend:'11/20',agreeEnd:'11/23'}
   ]},
   NH농협:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/22',wichok:'10/7',urlSend:'10/1'},
-    {round:'2차',deadline:'9/29',wichok:'10/13',urlSend:'10/7'},
-    {round:'3차',deadline:'10/7',wichok:'10/20',urlSend:'10/15'}
+    {round:'10월 1차',deadline:'9/22',wichok:'10/7',urlSend:'10/1'},
+    {round:'10월 2차',deadline:'9/29',wichok:'10/13',urlSend:'10/7'},
+    {round:'10월 3차',deadline:'10/7',wichok:'10/20',urlSend:'10/15'},
+    {round:'11월 1차',deadline:'11/2',wichok:'11/12',urlSend:'11/9',agreeEnd:'11/11'},
+    {round:'11월 2차',deadline:'11/9',wichok:'11/19',urlSend:'11/16',agreeEnd:'11/18'},
+    {round:'11월 3차',deadline:'11/16',wichok:'11/26',urlSend:'11/23',agreeEnd:'11/25'}
   ]},
   ABL생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/21',wichok:'10/6',urlSend:'9/30'},
-    {round:'2차',deadline:'10/1',wichok:'10/15',urlSend:'10/12'},
-    {round:'3차',deadline:'10/14',wichok:'10/26',urlSend:'10/21'}
+    {round:'10월 1차',deadline:'9/21',wichok:'10/6',urlSend:'9/30'},
+    {round:'10월 2차',deadline:'10/1',wichok:'10/15',urlSend:'10/12'},
+    {round:'10월 3차',deadline:'10/14',wichok:'10/26',urlSend:'10/21'},
+    {round:'11월 1차',deadline:'10/26',wichok:'11/5',urlSend:'11/2',agreeEnd:'11/4'},
+    {round:'11월 2차',deadline:'11/2',wichok:'11/16',urlSend:'11/9',agreeEnd:'11/11'},
+    {round:'11월 3차',deadline:'11/12',wichok:'11/25',urlSend:'11/19',agreeEnd:'11/24'}
   ]},
   IBK연금:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/21',wichok:'10/6',urlSend:'9/29'},
-    {round:'2차',deadline:'10/1',wichok:'10/15',urlSend:'10/8'},
-    {round:'3차',deadline:'10/14',wichok:'10/26',urlSend:'10/20'}
+    {round:'10월 1차',deadline:'9/21',wichok:'10/6',urlSend:'9/29'},
+    {round:'10월 2차',deadline:'10/1',wichok:'10/15',urlSend:'10/8'},
+    {round:'10월 3차',deadline:'10/14',wichok:'10/26',urlSend:'10/20'},
+    {round:'11월 1차',deadline:'10/26',wichok:'11/5',urlSend:'10/30',agreeEnd:'11/2'},
+    {round:'11월 2차',deadline:'11/4',wichok:'11/16',urlSend:'11/10',agreeEnd:'11/11'},
+    {round:'11월 3차',deadline:'11/16',wichok:'11/25',urlSend:'11/20',agreeEnd:'11/22'}
   ]},
   카디프:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/21',wichok:'10/8',urlSend:'9/29'},
-    {round:'2차',deadline:'9/28',wichok:'10/15',urlSend:'10/6'},
-    {round:'3차',deadline:'10/6',wichok:'10/22',urlSend:'10/13'}
+    {round:'10월 1차',deadline:'9/21',wichok:'10/8',urlSend:'9/29'},
+    {round:'10월 2차',deadline:'9/28',wichok:'10/15',urlSend:'10/6'},
+    {round:'10월 3차',deadline:'10/6',wichok:'10/22',urlSend:'10/13'},
+    {round:'11월 1차',deadline:'10/27',wichok:'11/12',urlSend:'11/3',agreeEnd:'11/6'},
+    {round:'11월 2차',deadline:'11/3',wichok:'11/19',urlSend:'11/10',agreeEnd:'11/13'},
+    {round:'11월 3차',deadline:'11/10',wichok:'11/26',urlSend:'11/17',agreeEnd:'11/20'}
   ]},
   하나생명:{type:'전자서명',schedules:[
-    {round:'1차',deadline:'9/22',wichok:'10/8'},
-    {round:'2차',deadline:'10/1',wichok:'10/16'},
-    {round:'3차',deadline:'10/12',wichok:'10/23'}
+    {round:'10월 1차',deadline:'9/22',wichok:'10/8'},
+    {round:'10월 2차',deadline:'10/1',wichok:'10/16'},
+    {round:'10월 3차',deadline:'10/12',wichok:'10/23'},
+    {round:'11월 1차',deadline:'10/26',wichok:'11/6',urlSend:'고정링크_협등 이후',agreeEnd:'11/2'},
+    {round:'11월 2차',deadline:'11/2',wichok:'11/13',urlSend:'고정링크_협등 이후',agreeEnd:'11/9'},
+    {round:'11월 3차',deadline:'11/9',wichok:'11/20',urlSend:'고정링크_협등 이후',agreeEnd:'11/16'}
   ]}
 };
 
@@ -1852,6 +1922,48 @@ function renderKlia(input) {
 
 // SAENGBO 데이터는 상단 일정 관리 섹션을 확인하세요
 
+// ── URL 동의 강조 (전자서명 보험사) ──
+function ddayFromToday(str) {
+  if (!/^\d{1,2}\/\d{1,2}/.test(String(str || ''))) return null;
+  const t = new Date(); const t0 = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+  return Math.round((parseD(str) - t0) / 86400000);
+}
+function ddayBadge(str) {
+  const d = ddayFromToday(str);
+  if (d === null) return '';
+  if (d > 0) return `<span class="dd ${d <= 2 ? 'dd-warn' : 'dd-ok'}">⏰ 동의 마감까지 D-${d}</span>`;
+  if (d === 0) return `<span class="dd dd-red">⏰ 오늘 동의 마감!</span>`;
+  return `<span class="dd dd-past">동의 마감 지남</span>`;
+}
+function urlPeriod(c) {
+  const fixed = /고정링크/.test(String(c.urlSend || ''));
+  const end = c.agreeEnd ? fmtAny(c.agreeEnd) : '';
+  if (fixed) return `고정링크로 동의${end ? ` <span class="hu-to">~ ${end}까지</span>` : ''}`;
+  if (c.urlSend && end) return `${fmtAny(c.urlSend)} <span class="hu-to">~ ${end}</span>`;
+  if (c.urlSend) return `${fmtAny(c.urlSend)} 발송`;
+  return '';
+}
+function heroCardESign(c, round) {
+  const period = urlPeriod(c);
+  if (!period) return heroCard(c, round);
+  const fixedNote = /협등 이후/.test(String(c.urlSend || '')) ? `<div class="hu-note">※ 협회 등록 이후 고정링크로 동의</div>` : '';
+  return `<div class="hero">
+    <span class="hero-badge">🟢 이번 회차${round ? ' · ' + round : ''}</span>
+    <div class="hu-label">URL 동의 기간</div>
+    <div class="hu-period">${period}</div>
+    ${fixedNote}
+    ${c.agreeEnd ? `<div style="margin:6px 0 10px">${ddayBadge(c.agreeEnd)}</div>` : '<div style="height:8px"></div>'}
+    <div class="hero-sub">📮 <b>${fmtAny(c.deadline)}</b>까지 서류 제출<br>✅ <b>${fmtAny(c.wichok)}</b> 위촉</div>
+  </div>`;
+}
+function prevLineESign(p, round) {
+  if (!p) return '';
+  const fixed = /고정링크/.test(String(p.urlSend || ''));
+  const agreeTxt = p.agreeEnd ? ` · <b>URL 동의 ~${fmtAny(p.agreeEnd)}</b>` : (p.urlSend ? ` · URL ${fixed ? '고정링크' : fmtAny(p.urlSend)}` : '');
+  return `<div class="prev-line"><span class="prev-tag">🔵 앞 회차${round ? ' · ' + round : ''}</span>
+    서류 ${fmtAny(p.deadline)} 마감${agreeTxt} → ${fmtAny(p.wichok)} 위촉</div>`;
+}
+
 function renderSaengbo(input, ins) {
   const data = SAENGBO[ins];
   if (!data) return '';
@@ -1861,12 +1973,13 @@ function renderSaengbo(input, ins) {
   if (!upcoming.length) {
     const nm = nextMonthOf(data.schedules);
     return `<div class="no-res" style="padding:14px 0"><div class="em">📅</div><div style="font-size:13.5px;color:var(--text2);line-height:1.8">${nm}월 일정이 아직 공개되지 않았어요.<br>곧 업데이트 예정이니 조금만 기다려 주세요! 😊</div></div>
-    ${prevLine(c2, c2 && c2.round)}`;
+    ${data.type === '전자서명' ? prevLineESign(c2, c2 && c2.round) : prevLine(c2, c2 && c2.round)}`;
   }
   const c1 = upcoming[0];
-  return heroCard(c1, c1.round)
-    + (c2 ? `<div class="hint">📌 앞 회차에 접수되었을 수도 있으니, 앞 회차 위촉일도 함께 확인해 주세요.</div>` : '')
-    + prevLine(c2, c2 && c2.round);
+  const es = data.type === '전자서명';
+  return (es ? heroCardESign(c1, c1.round) : heroCard(c1, c1.round))
+    + (c2 ? `<div class="hint">📌 앞 회차에 접수되었을 수도 있으니, 앞 회차 ${es ? 'URL 동의일과 ' : ''}위촉일도 함께 확인해 주세요.</div>` : '')
+    + (es ? prevLineESign(c2, c2 && c2.round) : prevLine(c2, c2 && c2.round));
 }
 
 
