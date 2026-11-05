@@ -1254,7 +1254,8 @@ button[onclick="closeSchModal()"]{color:var(--soft-tx)!important}
 .addr-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
 .addr-head b{font-size:15px;color:var(--text)}
 .addr-head button{border:none;background:none;font-size:22px;color:var(--text3);cursor:pointer;line-height:1}
-#addrEmbed{flex:1;min-height:0}
+#addrEmbed{flex:1;min-height:0;position:relative}
+.addr-wait{padding:40px 16px;text-align:center;color:var(--text3);font-size:13.5px}
 .addr-tip{display:none;font-size:12.5px;color:#92400E;background:var(--amber-s);border-radius:8px;padding:6px 10px;margin-top:6px}
 .addr-tip.show{display:block}
 .crs-open{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%;margin:12px 0 0!important;padding:13px 40px 13px 16px!important;border-radius:12px!important;background:#FFF7FA!important;box-shadow:inset 0 0 0 1.5px var(--accent-m);text-align:left}
@@ -1270,6 +1271,12 @@ button[onclick="closeSchModal()"]{color:var(--soft-tx)!important}
 .crs-btn .clbl{font-size:14px}
 .crs-btn .csub{font-size:11.5px}
 .crs-note{font-size:12.5px;color:#92400E;background:var(--amber-s);border-radius:8px;padding:8px 10px;margin-top:12px;line-height:1.5}
+
+/* ── 상세주소 칸 ── */
+.addr2-badge{display:inline-block;font-size:11.5px;font-weight:800;color:var(--accent);background:#FFF0F5;border-radius:6px;padding:1px 7px;margin-left:4px}
+.addr2-warn{display:none;font-size:12.5px;color:#92400E;background:var(--amber-s);border-radius:8px;padding:6px 10px;margin-top:6px;line-height:1.5}
+.addr2-fg.need .addr2-warn{display:block}
+.addr2-fg.need input{border-color:#F3C77A!important;box-shadow:0 0 0 3px rgba(243,199,122,.18)!important}
 </style>
 </head>
 <body>
@@ -1513,11 +1520,15 @@ button[onclick="closeSchModal()"]{color:var(--soft-tx)!important}
         <span class="af-emsg" id="err-zip">5자리 우편번호를 입력해 주세요</span>
       </div>
       <div class="af-fg full af-addr-wrap">
-        <label>주소 <span class="req">*</span> <span style="font-weight:400;color:var(--text3);font-size:11px">22자 이내 권장</span></label>
-        <input id="inp-address" type="text" placeholder="서울 성동구 아차산로17길 49, 209호" oninput="onAddress()" onpaste="onPaste(event)">
+        <label>주소 <span class="req">*</span> <span style="font-weight:400;color:var(--text3);font-size:11px">상세주소까지 합쳐 22자 이내 권장</span></label>
+        <input id="inp-address" type="text" placeholder="서울 성동구 아차산로17길 49" oninput="onAddress()" onpaste="onPaste(event)">
         <span class="af-addr-cnt" id="addr-cnt">0</span>
-        <span class="addr-tip" id="addrTip">뒤에 동·호수를 이어서 적어주세요</span>
-        <span class="af-emsg" id="err-address">주소를 28자 이내로 입력해 주세요</span>
+        <span class="af-emsg" id="err-address">주소를 상세주소까지 합쳐 28자 이내로 입력해 주세요</span>
+      </div>
+      <div class="af-fg full addr2-fg" id="addr2Fg">
+        <label>상세주소 <span class="addr2-badge">동 · 호수</span></label>
+        <input id="inp-addr2" type="text" placeholder="예: 101동 1203호  (없으면 비워두세요)" oninput="onAddress()">
+        <span class="addr2-warn" id="addr2Warn">동·호수를 꼭 확인해 주세요. 단독주택이라 없으면 비워두셔도 돼요</span>
       </div>
     </div>
   </div>
@@ -2595,10 +2606,18 @@ function fmtPhone(inp) {
 }
 
 // ── 주소 ──
+function fullAddr() {
+  const a = (document.getElementById('inp-address').value || '').trim();
+  const b = (document.getElementById('inp-addr2')?.value || '').trim();
+  return (a + (b ? ' ' + b : '')).trim();
+}
 function onAddress() {
   const inp = document.getElementById('inp-address');
   const cnt = document.getElementById('addr-cnt');
-  const len = inp.value.length;
+  const len = fullAddr().length;
+  const a2 = document.getElementById('inp-addr2');
+  const fg = document.getElementById('addr2Fg');
+  if (fg) fg.classList.toggle('need', inp.value.trim().length > 0 && !(a2 && a2.value.trim()));
   cnt.textContent = len;
   cnt.className = 'addr-cnt'+(len>28?' over':len>22?' warn':'');
   inp.classList.toggle('err', len>28);
@@ -2627,7 +2646,7 @@ function validate() {
   const jumin   = g('inp-jumin');
   const phone   = g('inp-phone');
   const zip     = g('inp-zip');
-  const address = g('inp-address');
+  const address = fullAddr();
 
   const nameOk  = name.length > 0;
   const sabunOk = sabun.length > 0;
@@ -2720,7 +2739,7 @@ function getToday(){
 let _pendingFill = false;
 
 async function runFill(){
-  const addr = g('inp-address');
+  const addr = fullAddr();
   if (addr.length > 28){
     showModal(`주소가 <strong>${addr.length}자</strong>입니다.<br><br>PDF 서류 특성상 28자 초과 시<br>글자가 잘려 출력됩니다.<br>22자 이내로 줄여서 다시 입력해 주세요.`);
     return;
@@ -2737,7 +2756,7 @@ async function runFill(){
 }
 
 async function doFill(){
-  const addr = g('inp-address');
+  const addr = fullAddr();
   const data = {
     name:    g('inp-name'),
     sabun:   g('inp-sabun'),
@@ -3193,47 +3212,57 @@ async function runBatch() {
 }
 
 // ── 우편번호 검색 (카카오 우편번호 서비스) ──
-const POSTCODE_SRC = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
-let _postcodeReady = false;
+// 카카오 새 주소(kakaocdn)를 먼저 쓰고, 안 되면 예전 주소(daumcdn)로
+const POSTCODE_SRCS = ['https://t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js',
+                       'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'];
+function PostcodeCls() { return (window.kakao && kakao.Postcode) || (window.daum && daum.Postcode) || null; }
+function postcodeNS() { return (window.kakao && kakao.postcode) || (window.daum && daum.postcode) || null; }
+let _postcodeP = null;
 function preloadPostcode() {
-  if (_postcodeReady) return Promise.resolve();
-  return loadScript(POSTCODE_SRC).then(() => new Promise(res => {
-    if (window.daum && daum.postcode && daum.postcode.load) daum.postcode.load(() => { _postcodeReady = true; res(); });
-    else { _postcodeReady = !!(window.daum && daum.Postcode); res(); }
-  }));
+  if (_postcodeP) return _postcodeP;
+  _postcodeP = (async () => {
+    let lastErr;
+    for (const src of POSTCODE_SRCS) {
+      try { await loadScript(src); if (PostcodeCls() || postcodeNS()) break; } catch (e) { lastErr = e; }
+    }
+    const ns = postcodeNS();
+    if (ns && ns.load) await new Promise(res => ns.load(res));
+    if (!PostcodeCls()) throw lastErr || new Error('postcode');
+  })();
+  _postcodeP.catch(() => { _postcodeP = null; });
+  return _postcodeP;
 }
 function fillPostcode(d) {
   const zip = d.zonecode || '';
   const addr = (d.userSelectedType === 'J' ? d.jibunAddress : d.roadAddress) || d.roadAddress || d.jibunAddress || d.autoRoadAddress || '';
   const zi = document.getElementById('inp-zip'), inp = document.getElementById('inp-address');
   zi.value = zip;
-  inp.value = addr.trim() + (addr ? ' ' : '');
+  inp.value = addr.trim();
   closeAddrSearch();
   try { onAddress(); } catch (e) {}
-  validate();
-  setTimeout(() => { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }, 50);
-  showAddrTip();
+  try { validate(); } catch (e) {}
+  const a2 = document.getElementById('inp-addr2');
+  setTimeout(() => { a2.focus(); a2.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 80);
+  try { onAddress(); } catch (e) {}
 }
 function openAddrSearch() {
-  // 스크립트가 미리 준비돼 있으면 바로 팝업으로 열기 (팝업 차단 방지)
-  if (_postcodeReady && window.daum && daum.Postcode) {
-    new daum.Postcode({ oncomplete: fillPostcode }).open({ popupTitle: '우편번호 검색', autoClose: true });
-    return;
+  let layer = document.getElementById('addrLayer');
+  if (!layer) {
+    layer = document.createElement('div');
+    layer.id = 'addrLayer';
+    layer.innerHTML = '<div class="addr-box"><div class="addr-head"><b>우편번호 검색</b><button onclick="closeAddrSearch()" aria-label="닫기">×</button></div><div id="addrEmbed"><div class="addr-wait">검색창을 불러오는 중...</div></div></div>';
+    layer.addEventListener('click', e => { if (e.target === layer) closeAddrSearch(); });
+    document.body.appendChild(layer);
   }
-  // 아직 준비 전이면 불러온 뒤 화면 안에 띄우기
+  layer.classList.add('show');
   preloadPostcode().then(() => {
-    let layer = document.getElementById('addrLayer');
-    if (!layer) {
-      layer = document.createElement('div');
-      layer.id = 'addrLayer';
-      layer.innerHTML = '<div class="addr-box"><div class="addr-head"><b>우편번호 검색</b><button onclick="closeAddrSearch()" aria-label="닫기">×</button></div><div id="addrEmbed"></div></div>';
-      layer.addEventListener('click', e => { if (e.target === layer) closeAddrSearch(); });
-      document.body.appendChild(layer);
-    }
     const box = document.getElementById('addrEmbed'); box.innerHTML = '';
-    layer.classList.add('show');
-    new daum.Postcode({ oncomplete: fillPostcode, width: '100%', height: '100%' }).embed(box);
-  }).catch(() => alert('우편번호 검색을 불러오지 못했어요. 우편번호를 직접 입력해 주세요.'));
+    const P = PostcodeCls();
+    new P({ oncomplete: fillPostcode, width: '100%', height: '100%' }).embed(box, { autoClose: true });
+  }).catch(() => {
+    closeAddrSearch();
+    alert('우편번호 검색을 불러오지 못했어요. 우편번호를 직접 입력해 주세요.');
+  });
 }
 document.addEventListener('DOMContentLoaded', () => { preloadPostcode().catch(() => {}); });
 function closeAddrSearch() {
