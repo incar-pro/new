@@ -1203,6 +1203,59 @@ button[onclick="closeSchModal()"]{color:var(--soft-tx)!important}
   .prep-side{position:absolute;top:16px;left:calc(100% + 12px);width:260px;height:calc(100% - 32px);margin:0}
   .prep-side .ps-card{position:sticky;top:76px}
 }
+
+/* ── 여러 명 한번에 ── */
+.af-mode{display:flex;background:#fff;border:1px solid var(--border);border-radius:12px;padding:4px;gap:4px;margin-bottom:12px}
+.af-mode-btn{flex:1;border:none;background:none;border-radius:9px;padding:11px 4px;font-size:14.5px;font-weight:700;color:var(--text2);cursor:pointer;font-family:inherit}
+.af-mode-btn.on{background:#FFF7FA;color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.bt-steps{font-size:13.5px;color:var(--text2);line-height:1.9;margin:-4px 0 12px}
+.bt-steps b{display:inline-flex;width:20px;height:20px;border-radius:50%;background:#FFF0F5;color:var(--accent);font-size:12px;align-items:center;justify-content:center;margin-right:6px}
+.bt-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.bt-btn{display:flex;align-items:center;justify-content:center;padding:12px 8px;border-radius:12px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--accent-m);color:var(--accent);font-size:14px;font-weight:800;cursor:pointer;border:none;font-family:inherit}
+.bt-btn:hover{background:#FFF7FA}
+.bt-paste{width:100%;min-height:96px;border:1.5px dashed var(--accent-m);border-radius:12px;padding:12px;font-size:13px;font-family:inherit;resize:vertical;box-sizing:border-box;color:var(--text);background:#fff}
+.bt-paste:focus{outline:none;border-color:var(--accent)}
+.bt-sec{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px;font-size:12.5px;color:var(--text2)}
+.bt-def{display:inline-flex;align-items:center;gap:4px;font-weight:700;color:var(--text)}
+.bt-table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:12px}
+.bt-table{width:100%;border-collapse:collapse;font-size:13px;min-width:620px}
+.bt-table th{background:#FAF8F9;color:var(--text2);font-size:12px;font-weight:700;text-align:left;padding:8px 10px;white-space:nowrap}
+.bt-table td{padding:9px 10px;border-top:1px solid var(--border-soft);vertical-align:top;color:var(--text)}
+.bt-table tr.bad td{background:#FFF8F8}
+.bt-sub{font-size:12px;color:var(--text2);margin-top:2px}
+.bt-table td:nth-child(3),.bt-table td:nth-child(2){white-space:nowrap}
+.bt-addr{max-width:220px;word-break:keep-all}
+.bt-len{font-size:11px;color:#B45309;background:#FFF4DC;border-radius:6px;padding:1px 5px}
+.bt-tg{border:none;border-radius:8px;padding:6px 10px;margin:0 4px 4px 0;font-size:13px;font-weight:700;cursor:pointer;background:#F4F1F2;color:var(--text3);font-family:inherit;white-space:nowrap;min-width:58px}
+.bt-tg.on{background:#FFF7FA;color:var(--accent);box-shadow:inset 0 0 0 1.5px var(--accent)}
+.bt-tg:not(.on){text-decoration:line-through;text-decoration-color:#CFC6CA}
+.bt-docs{white-space:nowrap}
+.bt-hint{font-size:13px;color:var(--text2);background:#FAF8F9;border-radius:10px;padding:9px 12px;margin:-4px 0 10px;line-height:1.5}
+.bt-hint b{color:var(--accent)}
+.bt-err{color:#C81E1E;font-weight:700;font-size:12.5px}
+.bt-ok{color:#1F7A52;font-weight:700;font-size:12.5px}
+.bt-del{border:none;background:none;color:var(--text3);font-size:18px;cursor:pointer;line-height:1}
+.bt-sum{font-size:13px;color:var(--text2);margin:10px 2px 4px;line-height:1.6}
+.bt-run-sub{font-size:12.5px;font-weight:600;color:var(--text2)}
+#btn-batch:disabled .bt-run-sub{color:#B9AEB3}
+#btn-batch .run-sub::after{content:none}
+
+/* ── 손보·생보 경력 다를 때 ── */
+.crs-link{display:block;margin:12px auto 0;border:none;background:none;color:var(--accent);font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;padding:6px 10px}
+.crs-link span{font-size:15px}
+.crs-open{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%;margin:12px 0 0!important;padding:13px 40px 13px 16px!important;border-radius:12px!important;background:#FFF7FA!important;box-shadow:inset 0 0 0 1.5px var(--accent-m);text-align:left}
+.crs-open:hover{box-shadow:inset 0 0 0 1.5px var(--accent)}
+.crs-open .crs-open-t{font-size:15px!important;font-weight:800;color:var(--accent)}
+.crs-open .crs-open-s{font-size:12.5px!important;font-weight:500;color:var(--text2)}
+.crs-open .crs-open-a{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:22px!important;color:var(--accent)}
+.crs-row{margin-top:12px}
+.crs-l{font-size:14px;font-weight:800;color:var(--text);margin:0 2px 6px}
+.crs-l em{font-style:normal;color:var(--accent);font-size:13px}
+.crs-btns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.crs-btn{padding:10px 4px!important}
+.crs-btn .clbl{font-size:14px}
+.crs-btn .csub{font-size:11.5px}
+.crs-note{font-size:12.5px;color:#92400E;background:var(--amber-s);border-radius:8px;padding:8px 10px;margin-top:12px;line-height:1.5}
 </style>
 </head>
 <body>
@@ -1244,6 +1297,13 @@ button[onclick="closeSchModal()"]{color:var(--soft-tx)!important}
       <button class="career-btn career-full" id="cb-신규" onclick="selectCareer('신규')"><span class="clbl">신규</span><span class="csub">등록 이력 없음</span></button>
       <button class="career-btn" id="cb-경력1" onclick="selectCareer('경력1')"><span class="clbl">경력 1</span><span class="csub">3년 이내 · 365일 미만</span></button>
       <button class="career-btn" id="cb-경력2" onclick="selectCareer('경력2')"><span class="clbl">경력 2</span><span class="csub">3년 이내 · 365일 이상</span></button>
+    </div>
+    <button class="crs-link crs-open" id="crsLink" onclick="toggleCareerSplit()" style="display:none"><span class="crs-open-t">손보·생보 경력이 서로 달라요</span><span class="crs-open-s">예: 손보는 경력, 생보는 신규일 때</span><span class="crs-open-a">›</span></button>
+    <div id="crsPanel" style="display:none">
+      <div class="crs-row"><div class="crs-l" id="crs-Son-label">손해보험</div><div class="crs-btns"><button class="career-btn crs-btn" id="crs-Son-신규" onclick="selectCareerSide('Son','신규')"><span class="clbl">신규</span><span class="csub">이력 없음</span></button><button class="career-btn crs-btn" id="crs-Son-경력1" onclick="selectCareerSide('Son','경력1')"><span class="clbl">경력 1</span><span class="csub">365일 미만</span></button><button class="career-btn crs-btn" id="crs-Son-경력2" onclick="selectCareerSide('Son','경력2')"><span class="clbl">경력 2</span><span class="csub">365일 이상</span></button></div></div>
+      <div class="crs-row"><div class="crs-l" id="crs-Saeng-label">생명보험</div><div class="crs-btns"><button class="career-btn crs-btn" id="crs-Saeng-신규" onclick="selectCareerSide('Saeng','신규')"><span class="clbl">신규</span><span class="csub">이력 없음</span></button><button class="career-btn crs-btn" id="crs-Saeng-경력1" onclick="selectCareerSide('Saeng','경력1')"><span class="clbl">경력 1</span><span class="csub">365일 미만</span></button><button class="career-btn crs-btn" id="crs-Saeng-경력2" onclick="selectCareerSide('Saeng','경력2')"><span class="clbl">경력 2</span><span class="csub">365일 이상</span></button></div></div>
+      <div class="crs-note" id="crsNote">손보·생보 경력을 각각 골라주세요</div>
+      <button class="crs-link" onclick="toggleCareerSplit()">손보·생보 경력이 같아요 <span>›</span></button>
     </div>
   </div>
   <div id="clWrap" style="display:none">
@@ -1366,6 +1426,46 @@ button[onclick="closeSchModal()"]{color:var(--soft-tx)!important}
     <div class="af-file-list" id="file-list"></div>
   </div>
 
+  <!-- 한 명 / 여러 명 -->
+  <div class="af-mode">
+    <button class="af-mode-btn on" id="mode-one" onclick="setAfMode('one')">한 명씩</button>
+    <button class="af-mode-btn" id="mode-many" onclick="setAfMode('many')">여러 명 한번에</button>
+  </div>
+
+  <!-- 여러 명 한번에 -->
+  <div id="batchWrap" style="display:none">
+    <div class="card">
+      <div class="card-title">여러 명 정보를 넣어주세요</div>
+      <div class="bt-steps">
+        <div><b>1</b> 엑셀 양식을 받아서 명단을 채워요</div>
+        <div><b>2</b> 엑셀 파일을 올리거나, 명단을 복사해서 아래 칸에 붙여넣어요</div>
+      </div>
+      <div class="bt-btns">
+        <button class="bt-btn" onclick="downloadBatchTemplate()">엑셀 양식 받기</button>
+        <label class="bt-btn">엑셀 파일 올리기<input type="file" accept=".xlsx,.xls,.csv" onchange="onBatchFile(this)" hidden></label>
+      </div>
+      <textarea id="batchPaste" class="bt-paste" placeholder="엑셀에서 명단을 복사해서 여기에 붙여넣으세요 (Ctrl+V)&#10;순서: 이름 · 사원번호 · 주민등록번호 · 휴대폰번호 · 우편번호 · 주소 · 손보 · 생보" oninput="onBatchPaste()"></textarea>
+      <div class="bt-sec">
+        <span class="bt-note">손보·생보 칸이 비어 있으면</span>
+        <label class="bt-def"><input type="checkbox" id="bt-def-son" checked onchange="renderBatch()"> 손보</label>
+        <label class="bt-def"><input type="checkbox" id="bt-def-saeng" checked onchange="renderBatch()"> 생보</label>
+        <span class="bt-note">로 출력해요</span>
+      </div>
+    </div>
+    <div class="card" id="batchListCard" style="display:none">
+      <div class="card-title" id="batchTitle">명단 확인</div>
+      <div class="bt-hint">사람마다 <b>손보 · 생보</b> 버튼을 눌러서 출력할 서류를 따로 고를 수 있어요 (분홍 = 출력)</div>
+      <div class="bt-table-wrap"><table class="bt-table" id="batchTable"></table></div>
+      <div class="bt-sum" id="batchSum"></div>
+      <button class="af-btn-run" id="btn-batch" onclick="runBatch()" disabled><span class="run-main">한번에 서류 만들기<span class="run-arrow">→</span></span><span class="bt-run-sub" id="batchRunSub"></span></button>
+      <div class="af-prog-wrap" id="bprog-wrap">
+        <div class="af-prog-bar"><div class="af-prog-fill" id="bprog-fill"></div></div>
+        <div class="af-prog-text" id="bprog-text">처리 중...</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="singleWrap">
   <!-- 기본 정보 입력 -->
   <div class="card">
     <div class="card-title">✏️ 기본 정보 입력</div>
@@ -1428,6 +1528,7 @@ button[onclick="closeSchModal()"]{color:var(--soft-tx)!important}
       <div class="af-done-title" id="done-title">완료!</div>
       <div class="af-done-sub" id="done-sub"></div>
     </div>
+  </div>
   </div>
 
   <div class="saeng-guide" id="saeng-guide"></div>
@@ -1773,7 +1874,7 @@ function openSchFull(){
 function closeSchModal(){document.getElementById('schModal').style.display='none';document.body.style.overflow=''}
 
 // ── 상태 ──
-const S = {wtype:null, career:null, checklist:[]};
+const S = {wtype:null, career:null, checklist:[], split:false, mixed:false, cSon:null, cSaeng:null};
 const WT_HAS생 = new Set(['생손3','생3','생']);
 const WT_HAS손 = new Set(['생손3','손3','손']);
 
@@ -1781,13 +1882,14 @@ function selectWtype(v) {
   S.wtype = v;
   document.querySelectorAll('.wtype-btn').forEach(b => b.classList.remove('sel'));
   document.getElementById('wt-'+v).classList.add('sel');
+  updateSplitVis();
   tryBuild();
   // 생명 포함 구분 선택 시 동양생명 서류 요청 팝업
   if (v.includes('생')) document.getElementById('dongyang-req-modal').classList.add('show');
 }
 
 function selectCareer(v) {
-  S.career = v;
+  S.career = v; S.mixed = false;
   document.querySelectorAll('.career-btn').forEach(b => b.classList.remove('sel'));
   document.getElementById('cb-'+v).classList.add('sel');
   tryBuild();
@@ -1839,7 +1941,7 @@ function renderPrepSummary() {
   const dl = prepDeadlines();
   box.innerHTML = `<div class="ps-card">
     <div class="ps-head"><div class="ps-k">내 위촉 일정 요약</div>
-      <div class="ps-title">${WT_NAME[S.wtype]} · ${CA_NAME[S.career]}</div></div>
+      <div class="ps-title">${WT_NAME[S.wtype]} · ${careerText()}</div></div>
     ${dl.map(x => `<div class="ps-row"><span class="ps-dot pk"></span><div><div class="ps-l">${x.k}</div><div class="ps-d">${x.d}${x.w ? '까지' : ''}</div>${x.w ? `<div class="ps-w">${x.w}</div>` : ''}</div></div>`).join('')}
     <div class="ps-note">본사 도착 기준 (성수 본점 아님) · 미리 제출해 주세요</div>
     <div class="ps-row"><span class="ps-dot gy"></span><div style="flex:1"><div class="ps-l">준비 서류</div>
@@ -1854,7 +1956,7 @@ function renderPrepSummary() {
 function copyPrepSummary() {
   const states = S.checklist.map(it => ({ it, ...prepItemState(it) }));
   const done = states.filter(s => s.done).length;
-  const lines = ['[위촉 준비 요약]', `위촉 구분: ${WT_NAME[S.wtype]} / ${CA_NAME[S.career]}`];
+  const lines = ['[위촉 준비 요약]', `위촉 구분: ${WT_NAME[S.wtype]} / ${careerText()}`];
   prepDeadlines().forEach(x => lines.push(`${x.k}: ${x.d}${x.w ? '까지 → ' + x.w : ''}`));
   lines.push('※ 본사 도착 기준 (성수 본점 아님), 미리 제출해 주세요', '', `[준비 서류] ${done}/${states.length} 완료`);
   let sec = '';
@@ -1914,6 +2016,94 @@ function tryBuild() {
   updateProgress();
 }
 
+// ── 손보·생보 경력이 다를 때 ──
+const CA_RANK = {'신규':0,'경력1':1,'경력2':2};
+const CA_SHORT = {'신규':'신규','경력1':'경력 1','경력2':'경력 2'};
+function updateSplitVis() {
+  const can = S.wtype === '생손3';
+  document.getElementById('crsLink').style.display = can && !S.split ? '' : 'none';
+  if (!can && S.split) { S.split = false; S.mixed = false; S.career = null; S.cSon = S.cSaeng = null; }
+  document.getElementById('crsPanel').style.display = S.split ? '' : 'none';
+  document.querySelector('.career-grid').style.display = S.split ? 'none' : '';
+  if (S.split) document.getElementById('crsLink').style.display = 'none';
+}
+function toggleCareerSplit() {
+  S.split = !S.split;
+  S.career = null; S.mixed = false; S.cSon = S.cSaeng = null;
+  document.querySelectorAll('.career-btn').forEach(b => b.classList.remove('sel'));
+  updateSplitVis(); refreshSplitLabels(); tryBuild();
+}
+function thirdSide() {
+  const a = CA_RANK[S.cSon], b = CA_RANK[S.cSaeng];
+  return a > b ? 'Son' : b > a ? 'Saeng' : 'same';
+}
+function refreshSplitLabels() {
+  const t = (S.cSon && S.cSaeng) ? thirdSide() : null;
+  document.getElementById('crs-Son-label').innerHTML = '손해보험' + (t === 'Son' ? ' <em>+ 제3</em>' : '');
+  document.getElementById('crs-Saeng-label').innerHTML = '생명보험' + (t === 'Saeng' ? ' <em>+ 제3</em>' : '');
+  const note = document.getElementById('crsNote');
+  if (!S.cSon || !S.cSaeng) note.textContent = '손보·생보 경력을 각각 골라주세요';
+  else if (t === 'same') note.textContent = '둘 다 같은 경력이라 생명+손해+제3 세트로 준비해요';
+  else note.textContent = `제3보험은 경력 일수가 더 많은 ${t === 'Son' ? '손보' : '생보'} 쪽에 붙어요`;
+}
+function selectCareerSide(side, v) {
+  S['c' + side] = v;
+  document.querySelectorAll(`[id^="crs-${side}-"].career-btn`).forEach(b => b.classList.remove('sel'));
+  document.getElementById(`crs-${side}-${v}`).classList.add('sel');
+  refreshSplitLabels();
+  if (S.cSon && S.cSaeng) {
+    if (S.cSon === S.cSaeng) { S.career = S.cSon; S.mixed = false; }
+    else { S.career = '혼합'; S.mixed = true; }
+  } else { S.career = null; S.mixed = false; }
+  tryBuild();
+}
+function mixedGroups() {
+  const t = thirdSide();
+  const g = [
+    { wt: t === 'Son' ? '손3' : '손', ca: S.cSon, label: t === 'Son' ? '손보+제3' : '손보' },
+    { wt: t === 'Saeng' ? '생3' : '생', ca: S.cSaeng, label: t === 'Saeng' ? '생보+제3' : '생보' }
+  ];
+  return g.sort((x, y) => CA_RANK[y.ca] - CA_RANK[x.ca]);
+}
+function careerText() {
+  if (!S.mixed) return CA_NAME[S.career] || '';
+  return mixedGroups().map(g => `${g.label} ${CA_SHORT[g.ca]}`).join(' · ');
+}
+function certOptsFor(wt, ca) {
+  const pre = ca === '경력2' ? '(경력자등록)' : '(신규)';
+  const H = ca === '경력2' ? '25H' : '30H';
+  if (wt === '손') return [`${pre} 손해보험(20H) 등록교육`];
+  if (wt === '생') return [`${pre} 생명보험(20H) 등록교육`];
+  if (wt === '손3') return [`${pre} 손해보험+제3보험(${H}) 등록교육`, `${pre} 손해보험(20H) 등록교육`, `${pre} 제3보험(20H) 등록교육`];
+  if (wt === '생3') return [`${pre} 생명보험+제3보험(${H}) 등록교육`, `${pre} 생명보험(20H) 등록교육`, `${pre} 제3보험(20H) 등록교육`];
+  return [];
+}
+function passOptsFor(wt) {
+  return { '손': ['손해보험 합격증'], '생': ['생명보험 합격증'], '손3': ['손보+제3보험 합격증','손해보험 합격증','제3보험 합격증'], '생3': ['생명+제3보험 합격증','생명보험 합격증','제3보험 합격증'] }[wt] || getPassOptions();
+}
+function buildMixedDocs(items, nextId) {
+  let id = nextId; const seen = new Set();
+  const add = (sec, text, sub) => { if (seen.has(text)) return; seen.add(text); items.push({ id: id++, sec, text, sub: sub || '', checked: false }); };
+  const grp = (sec, text, kind, opts) => items.push({ id: id++, sec, text, sub: kind, checked: false, opts });
+  mixedGroups().forEach(g => {
+    const sec = `서류 · ${g.label} (${CA_SHORT[g.ca]})`;
+    if (g.ca === '신규') {
+      add(sec, '신분증 사본'); add(sec, '통장 사본');
+      grp(sec, `합격증 선택 (${g.label})`, '_PASS_GROUP_', passOptsFor(g.wt));
+      grp(sec, `수료증 선택 (${g.label})`, '_CERT_GROUP_', certOptsFor(g.wt, '신규'));
+    } else if (g.ca === '경력1') {
+      grp(sec, `합격증 선택 (${g.label})`, '_PASS_GROUP_', passOptsFor(g.wt));
+      grp(sec, `수료증 선택 (${g.label})`, '_CERT_GROUP_', certOptsFor(g.wt, '신규'));
+      add(sec, '경력증명서', '금융사고 유무 기재'); add(sec, '협회말소 유무 확인', '손 / 생보 모두 말소');
+      add(sec, '이클린 — 본인정보조회-> 인쇄-> 전체출력');
+    } else {
+      add(sec, '신분증 사본'); add(sec, '통장 사본');
+      grp(sec, `수료증 선택 (${g.label})`, '_CERT_GROUP_', certOptsFor(g.wt, '경력2'));
+      add(sec, '이클린 — 본인정보조회-> 인쇄-> 전체출력');
+    }
+  });
+}
+
 function buildChecklist() {
   const wt = S.wtype, ca = S.career;
   const has생 = WT_HAS생.has(wt), has손 = WT_HAS손.has(wt);
@@ -1933,6 +2123,8 @@ function buildChecklist() {
     items.push(mk('생보 위촉 추가','협회 등록 이후 → 하나생명 — URL 동의',''));
     items.push({id:id++, sec:'생보 위촉 추가', text:'생명보험협회 등록 신청', sub:'_LINK_GROUP_', checked:false});
   }
+
+  if (S.mixed) { buildMixedDocs(items, id); S.checklist = items; return; }
 
   // 신규
   if (ca === '신규') {
@@ -1988,7 +2180,7 @@ function getCertOptions() {
 
 function renderSummaryChips() {
   const wtLabel = {'생손3':'생명+손해+제3보험','생3':'생명+제3보험','손3':'손보+제3보험','생':'생명보험','손':'손해보험'}[S.wtype]||'';
-  const caLabel = {'신규':'신규 (협회이력없음)','경력1':'경력1 · 3년이내·365일미만','경력2':'경력2 · 3년이내·365일이상'}[S.career]||'';
+  const caLabel = S.mixed ? careerText() : ({'신규':'신규 (협회이력없음)','경력1':'경력1 · 3년이내·365일미만','경력2':'경력2 · 3년이내·365일이상'}[S.career]||'');
   document.getElementById('summaryChips').innerHTML = `<span class="chip wt">${wtLabel}</span><span class="chip cr">${caLabel}</span>`;
 }
 
@@ -2049,7 +2241,7 @@ function renderLinkGroup(item) {
 }
 
 function renderDocGroup(item, type) {
-  const opts = type === 'pass' ? getPassOptions() : getCertOptions();
+  const opts = item.opts || (type === 'pass' ? getPassOptions() : getCertOptions());
   const title = type === 'pass' ? '합격증 선택' : '수료증 선택';
   let html = `<div style="padding:10px 4px;border-bottom:1px solid var(--border-soft)">
     <div class="ci-main" style="margin-bottom:6px">📄 ${title}</div>
@@ -2346,6 +2538,7 @@ function onFile(input) {
   // 업로드 박스 스타일 변경
   const box = document.getElementById('upload-box');
   box.classList.add('done');
+  setTimeout(() => { try { renderBatch(); } catch(e){} }, 0);
   document.getElementById('upload-text').textContent = '✅ ' + f.name;
   // 파일 목록 표시
   const list = document.getElementById('file-list');
@@ -2361,6 +2554,7 @@ function removeFile() {
   pdfFile = null;
   const box = document.getElementById('upload-box');
   box.classList.remove('done');
+  try { renderBatch(); } catch(e){}
   document.getElementById('upload-text').textContent = 'PDF 파일을 선택해 주세요';
   document.getElementById('file-list').innerHTML = '';
   validate();
@@ -2482,6 +2676,8 @@ function confirmDongyang(){
   if (_pendingFill) {
     _pendingFill = false;
     doFill();  // 저장 완료 후 내부에서 완료팝업 표시
+  } else if (_batchPending) {
+    runBatch();
   }
 }
 
@@ -2590,7 +2786,7 @@ function setP(pct,txt){
 }
 
 // ── PDF 채우기 + 페이지 분리 ──
-async function fillAndDownload(buf, mode, data, today){
+async function buildPdfBytes(buf, mode, data, today){
   const srcDoc = await PDFLib.PDFDocument.load(buf,{ignoreEncryption:true});
   const allPages = srcDoc.getPages();
   const {y4,y2,mm,dd} = today;
@@ -2631,9 +2827,12 @@ async function fillAndDownload(buf, mode, data, today){
     }
   }
 
-  // 하나의 파일로 다운로드
+  return await finalDoc.save();
+}
+async function fillAndDownload(buf, mode, data, today){
+  const {y4,mm,dd} = today;
   const label = mode === 'son' ? '손보' : mode === 'saeng' ? '생보' : '손보+생보';
-  const finalOut = await finalDoc.save();
+  const finalOut = await buildPdfBytes(buf, mode, data, today);
   dlPdf(finalOut, `위촉_${label}_${data.name}_${y4}${mm}${dd}.pdf`);
 }
 
@@ -2806,6 +3005,174 @@ async function applySpec(pdfDoc, pages, d, today, from, to) {
 }
 async function fillSon(pdfDoc, pages, d, today)   { await applySpec(pdfDoc, pages, d, today, 1, 12); }
 async function fillSaeng(pdfDoc, pages, d, today) { await applySpec(pdfDoc, pages, d, today, 13, 26); }
+
+// ═════ 여러 명 한번에 ═════
+let BATCH = [];
+let _batchPending = false;
+const BT_COLS = ['이름','사원번호','주민등록번호','휴대폰번호','우편번호','주소','손보','생보'];
+function setAfMode(m) {
+  document.getElementById('mode-one').classList.toggle('on', m === 'one');
+  document.getElementById('mode-many').classList.toggle('on', m === 'many');
+  document.getElementById('singleWrap').style.display = m === 'one' ? '' : 'none';
+  document.getElementById('batchWrap').style.display = m === 'many' ? '' : 'none';
+}
+function loadScript(src) {
+  return new Promise((res, rej) => {
+    if (document.querySelector(`script[src="${src}"]`)) return res();
+    const s = document.createElement('script'); s.src = src; s.onload = res; s.onerror = () => rej(new Error('라이브러리를 불러오지 못했어요. 인터넷 연결을 확인해 주세요.'));
+    document.head.appendChild(s);
+  });
+}
+const XLSX_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+const JSZIP_SRC = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+async function downloadBatchTemplate() {
+  try { await loadScript(XLSX_SRC); } catch (e) { alert(e.message); return; }
+  const rows = [BT_COLS, ['(예시)홍길동','1234567','900101-1234567','010-1234-5678','04790','서울 성동구 아차산로17길 49','O','O']];
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  Object.keys(ws).forEach(k => { if (k[0] !== '!') { ws[k].t = 's'; ws[k].z = '@'; } });
+  for (let r = 2; r <= 101; r++) ['B','C','D','E'].forEach(c => { ws[c + r] = ws[c + r] || { t: 's', v: '', z: '@' }; });
+  ws['!ref'] = 'A1:H101';
+  ws['!cols'] = [{wch:10},{wch:10},{wch:16},{wch:15},{wch:9},{wch:34},{wch:6},{wch:6}];
+  const guide = XLSX.utils.aoa_to_sheet([
+    ['작성 방법'],
+    ['1. [명단] 시트 2번째 줄부터 한 사람씩 적어주세요. (예시) 줄은 지우지 않아도 자동으로 빠져요.'],
+    ['2. 주민등록번호·휴대폰번호는 - 없이 숫자만 적어도 돼요.'],
+    ['3. 우편번호는 앞자리 0까지 5자리로 적어주세요. (예: 04790)'],
+    ['4. 주소는 28자 이내로 적어주세요. 길면 서류에서 글자가 잘려요.'],
+    ['5. 손보·생보 칸에 출력할 서류는 O, 안 할 서류는 비워두세요. 둘 다 비우면 사이트에서 고른 기본값으로 나와요.'],
+    ['6. 다 쓰면 사이트 [여러 명 한번에]에서 엑셀 파일을 올리거나, 명단을 복사해서 붙여넣으세요.']
+  ]);
+  guide['!cols'] = [{wch:90}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '명단');
+  XLSX.utils.book_append_sheet(wb, guide, '작성방법');
+  XLSX.writeFile(wb, '위촉_여러명_명단양식.xlsx');
+}
+async function onBatchFile(input) {
+  const f = input.files && input.files[0]; if (!f) return;
+  try {
+    await loadScript(XLSX_SRC);
+    const wb = XLSX.read(await f.arrayBuffer(), { type: 'array', raw: false });
+    const ws = wb.Sheets['명단'] || wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(ws, { header: 1, raw: false, defval: '' });
+    parseBatchRows(rows);
+    document.getElementById('batchPaste').value = '';
+  } catch (e) { alert('엑셀을 읽지 못했어요: ' + e.message); }
+  input.value = '';
+}
+function onBatchPaste() {
+  const t = document.getElementById('batchPaste').value;
+  const rows = t.split(/\r?\n/).filter(l => l.trim()).map(l => l.split('\t'));
+  parseBatchRows(rows);
+}
+function parseBatchRows(rows) {
+  rows = rows.map(r => r.map(c => String(c == null ? '' : c).trim())).filter(r => r.some(c => c));
+  let idx = { name:0, sabun:1, jumin:2, phone:3, zip:4, address:5, son:6, saeng:7 };
+  if (rows.length && rows[0].some(c => c.includes('이름'))) {
+    const hd = rows.shift();
+    const find = (...keys) => hd.findIndex(c => keys.some(k => c.replace(/\s/g, '').includes(k)));
+    idx = { name: find('이름','성명'), sabun: find('사번','사원'), jumin: find('주민'), phone: find('휴대','전화','핸드폰'),
+      zip: find('우편'), address: find('주소'), son: find('손보','손해'), saeng: find('생보','생명') };
+  }
+  const get = (r, i) => (i >= 0 && i < r.length ? r[i] : '');
+  const yes = v => /^(o|O|ㅇ|○|y|Y|v|V|1|예|√|✓|●)$/.test(String(v).trim());
+  BATCH = rows.filter(r => !get(r, idx.name).startsWith('(예시)')).map(r => {
+    const dj = get(r, idx.jumin).replace(/\D/g, '');
+    const dp = get(r, idx.phone).replace(/\D/g, '');
+    let zip = get(r, idx.zip).replace(/\D/g, ''); if (zip.length === 4) zip = '0' + zip;
+    const sv = get(r, idx.son), gv = get(r, idx.saeng);
+    return {
+      name: get(r, idx.name).replace(/\s/g, ''), sabun: get(r, idx.sabun).replace(/\D/g, ''),
+      jumin: dj.length === 13 ? dj.slice(0, 6) + '-' + dj.slice(6) : get(r, idx.jumin),
+      phone: dp.length === 11 ? `${dp.slice(0,3)}-${dp.slice(3,7)}-${dp.slice(7)}` : dp.length === 10 ? `${dp.slice(0,3)}-${dp.slice(3,6)}-${dp.slice(6)}` : get(r, idx.phone),
+      zip, address: get(r, idx.address),
+      son: (sv || gv) ? yes(sv) : null, saeng: (sv || gv) ? yes(gv) : null
+    };
+  });
+  renderBatch();
+}
+function batchDocs(p) {
+  const son = p.son === null ? document.getElementById('bt-def-son').checked : p.son;
+  const saeng = p.saeng === null ? document.getElementById('bt-def-saeng').checked : p.saeng;
+  return { son, saeng };
+}
+function batchErrors(p) {
+  const e = [];
+  if (!p.name) e.push('이름');
+  if (!p.sabun) e.push('사원번호');
+  if (!/^\d{6}-\d{7}$/.test(p.jumin)) e.push('주민번호');
+  if (!/^\d{2,3}-\d{3,4}-\d{4}$/.test(p.phone)) e.push('휴대폰');
+  if (!/^\d{5}$/.test(p.zip)) e.push('우편번호');
+  if (!p.address) e.push('주소'); else if (p.address.length > 28) e.push(`주소 ${p.address.length}자`);
+  const d = batchDocs(p); if (!d.son && !d.saeng) e.push('출력 서류');
+  return e;
+}
+function toggleBatchDoc(i, k) {
+  const d = batchDocs(BATCH[i]);
+  BATCH[i].son = d.son; BATCH[i].saeng = d.saeng;
+  BATCH[i][k] = !BATCH[i][k];
+  renderBatch();
+}
+function removeBatch(i) { BATCH.splice(i, 1); renderBatch(); }
+function renderBatch() {
+  const card = document.getElementById('batchListCard');
+  if (!BATCH.length) { card.style.display = 'none'; return; }
+  card.style.display = '';
+  const mask = j => /^\d{6}-\d{7}$/.test(j) ? j.slice(0, 8) + '******' : (j || '-');
+  let ok = 0;
+  const rows = BATCH.map((p, i) => {
+    const err = batchErrors(p), d = batchDocs(p);
+    if (!err.length) ok++;
+    return `<tr class="${err.length ? 'bad' : ''}">
+      <td>${i + 1}</td><td><b>${p.name || '-'}</b><div class="bt-sub">${p.sabun || '-'}</div></td>
+      <td>${mask(p.jumin)}<div class="bt-sub">${p.phone || '-'}</div></td>
+      <td class="bt-addr">${p.zip ? `(${p.zip}) ` : ''}${p.address || '-'}${p.address && p.address.length > 22 ? ` <span class="bt-len">${p.address.length}자</span>` : ''}</td>
+      <td class="bt-docs"><button class="bt-tg ${d.son ? 'on' : ''}" onclick="toggleBatchDoc(${i},'son')">${d.son ? '✓ ' : ''}손보</button><button class="bt-tg ${d.saeng ? 'on' : ''}" onclick="toggleBatchDoc(${i},'saeng')">${d.saeng ? '✓ ' : ''}생보</button></td>
+      <td>${err.length ? `<span class="bt-err">${err.join(', ')} 확인</span>` : '<span class="bt-ok">준비됨</span>'}</td>
+      <td><button class="bt-del" onclick="removeBatch(${i})" aria-label="빼기">×</button></td></tr>`;
+  }).join('');
+  document.getElementById('batchTable').innerHTML = `<thead><tr><th>#</th><th>이름 / 사번</th><th>주민번호 / 휴대폰</th><th>주소</th><th>출력</th><th>상태</th><th></th></tr></thead><tbody>${rows}</tbody>`;
+  const bad = BATCH.length - ok;
+  document.getElementById('batchTitle').textContent = `명단 확인 · ${BATCH.length}명`;
+  document.getElementById('batchSum').innerHTML = bad
+    ? `<span class="bt-err">${bad}명</span>은 빨간 칸을 고쳐서 다시 올려주세요. 나머지 <b>${ok}명</b>만 먼저 만들 수도 있어요.`
+    : `<b>${ok}명</b> 모두 준비됐어요.`;
+  const fileOk = pdfFile !== null;
+  document.getElementById('btn-batch').disabled = !(ok > 0 && fileOk);
+  document.getElementById('batchRunSub').textContent = !fileOk ? '먼저 맨 위에 위촉신청서 PDF를 첨부해 주세요' : `${ok}명 서류를 사람별 PDF로 만들어 압축파일 하나로 받아요`;
+}
+async function runBatch() {
+  const anySaeng = BATCH.some(p => !batchErrors(p).length && batchDocs(p).saeng);
+  if (anySaeng && !_batchPending) { _batchPending = true; showDongyangModal(); return; }
+  _batchPending = false;
+  const btn = document.getElementById('btn-batch'); const html = btn.innerHTML;
+  btn.disabled = true; btn.classList.add('busy');
+  const wrap = document.getElementById('bprog-wrap'); wrap.classList.add('show');
+  const setB = (pct, t) => { document.getElementById('bprog-fill').style.width = pct + '%'; document.getElementById('bprog-text').textContent = t; };
+  try {
+    await loadScript(JSZIP_SRC);
+    const zip = new JSZip(); const today = getToday(); const buf = await pdfFile.arrayBuffer();
+    const list = BATCH.filter(p => !batchErrors(p).length); const used = {};
+    for (let i = 0; i < list.length; i++) {
+      const p = list[i], d = batchDocs(p);
+      const mode = d.son && d.saeng ? 'both' : d.son ? 'son' : 'saeng';
+      btn.innerHTML = `<span class="run-main">⏳ ${i + 1} / ${list.length}명 만드는 중...</span>`;
+      setB(Math.round(i / list.length * 100), `${p.name} 서류 만드는 중...`);
+      const bytes = await buildPdfBytes(buf, mode, p, today);
+      const label = mode === 'son' ? '손보' : mode === 'saeng' ? '생보' : '손보+생보';
+      let fn = `위촉_${label}_${p.name}_${today.y4}${today.mm}${today.dd}`;
+      used[fn] = (used[fn] || 0) + 1; if (used[fn] > 1) fn += `(${used[fn]})`;
+      zip.file(fn + '.pdf', bytes);
+    }
+    setB(100, '압축파일 만드는 중...');
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = `위촉서류_${list.length}명_${today.y4}${today.mm}${today.dd}.zip`; a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    setB(100, `완료! ${list.length}명 서류를 압축파일로 받았어요`);
+  } catch (e) { alert('오류: ' + e.message); console.error(e); }
+  finally { btn.classList.remove('busy'); btn.innerHTML = html; renderBatch(); }
+}
 
 // ── 다운로드 ──
 function dlPdf(bytes,filename){
