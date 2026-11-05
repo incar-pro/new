@@ -1243,6 +1243,20 @@ button[onclick="closeSchModal()"]{color:var(--soft-tx)!important}
 /* ── 손보·생보 경력 다를 때 ── */
 .crs-link{display:block;margin:12px auto 0;border:none;background:none;color:var(--accent);font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;padding:6px 10px}
 .crs-link span{font-size:15px}
+/* ── 주소 검색 ── */
+.zip-row{display:flex;gap:8px;align-items:stretch}
+.zip-row input{flex:0 1 140px;min-width:0}
+.addr-search{display:inline-flex;align-items:center;gap:5px;flex-shrink:0;border:none;border-radius:10px;padding:0 14px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--accent);color:var(--accent);font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap}
+.addr-search:hover{background:#FFF7FA}
+#addrLayer{position:fixed;inset:0;z-index:3000;background:rgba(30,20,25,.45);display:none;align-items:center;justify-content:center;padding:16px}
+#addrLayer.show{display:flex}
+.addr-box{width:100%;max-width:480px;height:min(560px,85vh);background:#fff;border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.addr-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)}
+.addr-head b{font-size:15px;color:var(--text)}
+.addr-head button{border:none;background:none;font-size:22px;color:var(--text3);cursor:pointer;line-height:1}
+#addrEmbed{flex:1;min-height:0}
+.addr-tip{display:none;font-size:12.5px;color:#92400E;background:var(--amber-s);border-radius:8px;padding:6px 10px;margin-top:6px}
+.addr-tip.show{display:block}
 .crs-open{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;width:100%;margin:12px 0 0!important;padding:13px 40px 13px 16px!important;border-radius:12px!important;background:#FFF7FA!important;box-shadow:inset 0 0 0 1.5px var(--accent-m);text-align:left}
 .crs-open:hover{box-shadow:inset 0 0 0 1.5px var(--accent)}
 .crs-open .crs-open-t{font-size:15px!important;font-weight:800;color:var(--accent)}
@@ -1490,15 +1504,19 @@ button[onclick="closeSchModal()"]{color:var(--soft-tx)!important}
         <input id="inp-phone" type="text" placeholder="010-0000-0000" maxlength="13" oninput="fmtPhone(this);validate()">
         <span class="af-emsg" id="err-phone">올바른 형식으로 입력해 주세요</span>
       </div>
-      <div class="af-fg">
+      <div class="af-fg full">
         <label>우편번호 <span class="req">*</span></label>
-        <input id="inp-zip" type="text" placeholder="00000" maxlength="5" oninput="onlyNum(this);validate()">
+        <div class="zip-row">
+          <input id="inp-zip" type="text" placeholder="00000" maxlength="5" oninput="onlyNum(this);validate()">
+          <button type="button" class="addr-search" onclick="openAddrSearch()"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>우편번호 검색</button>
+        </div>
         <span class="af-emsg" id="err-zip">5자리 우편번호를 입력해 주세요</span>
       </div>
       <div class="af-fg full af-addr-wrap">
         <label>주소 <span class="req">*</span> <span style="font-weight:400;color:var(--text3);font-size:11px">22자 이내 권장</span></label>
         <input id="inp-address" type="text" placeholder="서울 성동구 아차산로17길 49, 209호" oninput="onAddress()" onpaste="onPaste(event)">
         <span class="af-addr-cnt" id="addr-cnt">0</span>
+        <span class="addr-tip" id="addrTip">뒤에 동·호수를 이어서 적어주세요</span>
         <span class="af-emsg" id="err-address">주소를 28자 이내로 입력해 주세요</span>
       </div>
     </div>
@@ -3172,6 +3190,61 @@ async function runBatch() {
     setB(100, `완료! ${list.length}명 서류를 압축파일로 받았어요`);
   } catch (e) { alert('오류: ' + e.message); console.error(e); }
   finally { btn.classList.remove('busy'); btn.innerHTML = html; renderBatch(); }
+}
+
+// ── 우편번호 검색 (카카오 우편번호 서비스) ──
+const POSTCODE_SRC = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+let _postcodeReady = false;
+function preloadPostcode() {
+  if (_postcodeReady) return Promise.resolve();
+  return loadScript(POSTCODE_SRC).then(() => new Promise(res => {
+    if (window.daum && daum.postcode && daum.postcode.load) daum.postcode.load(() => { _postcodeReady = true; res(); });
+    else { _postcodeReady = !!(window.daum && daum.Postcode); res(); }
+  }));
+}
+function fillPostcode(d) {
+  const zip = d.zonecode || '';
+  const addr = (d.userSelectedType === 'J' ? d.jibunAddress : d.roadAddress) || d.roadAddress || d.jibunAddress || d.autoRoadAddress || '';
+  const zi = document.getElementById('inp-zip'), inp = document.getElementById('inp-address');
+  zi.value = zip;
+  inp.value = addr.trim() + (addr ? ' ' : '');
+  closeAddrSearch();
+  try { onAddress(); } catch (e) {}
+  validate();
+  setTimeout(() => { inp.focus(); inp.setSelectionRange(inp.value.length, inp.value.length); }, 50);
+  showAddrTip();
+}
+function openAddrSearch() {
+  // 스크립트가 미리 준비돼 있으면 바로 팝업으로 열기 (팝업 차단 방지)
+  if (_postcodeReady && window.daum && daum.Postcode) {
+    new daum.Postcode({ oncomplete: fillPostcode }).open({ popupTitle: '우편번호 검색', autoClose: true });
+    return;
+  }
+  // 아직 준비 전이면 불러온 뒤 화면 안에 띄우기
+  preloadPostcode().then(() => {
+    let layer = document.getElementById('addrLayer');
+    if (!layer) {
+      layer = document.createElement('div');
+      layer.id = 'addrLayer';
+      layer.innerHTML = '<div class="addr-box"><div class="addr-head"><b>우편번호 검색</b><button onclick="closeAddrSearch()" aria-label="닫기">×</button></div><div id="addrEmbed"></div></div>';
+      layer.addEventListener('click', e => { if (e.target === layer) closeAddrSearch(); });
+      document.body.appendChild(layer);
+    }
+    const box = document.getElementById('addrEmbed'); box.innerHTML = '';
+    layer.classList.add('show');
+    new daum.Postcode({ oncomplete: fillPostcode, width: '100%', height: '100%' }).embed(box);
+  }).catch(() => alert('우편번호 검색을 불러오지 못했어요. 우편번호를 직접 입력해 주세요.'));
+}
+document.addEventListener('DOMContentLoaded', () => { preloadPostcode().catch(() => {}); });
+function closeAddrSearch() {
+  const l = document.getElementById('addrLayer');
+  if (l) l.classList.remove('show');
+}
+function showAddrTip() {
+  const t = document.getElementById('addrTip');
+  if (!t) return;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
 }
 
 // ── 다운로드 ──
