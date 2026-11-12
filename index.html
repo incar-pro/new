@@ -1277,6 +1277,19 @@ button[onclick="closeSchModal()"]{color:var(--soft-tx)!important}
 .addr2-warn{display:none;font-size:12.5px;color:#92400E;background:var(--amber-s);border-radius:8px;padding:6px 10px;margin-top:6px;line-height:1.5}
 .addr2-fg.need .addr2-warn{display:block}
 .addr2-fg.need input{border-color:#F3C77A!important;box-shadow:0 0 0 3px rgba(243,199,122,.18)!important}
+
+/* ── 위촉추가업무 ── */
+.header-right{gap:6px!important}
+.work-bg{position:fixed;inset:0;z-index:2500;background:rgba(30,20,25,.45);display:none;align-items:center;justify-content:center;padding:16px}
+.work-bg.show{display:flex}
+.work-box{width:100%;max-width:960px;height:92vh;background:#fff;border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.work-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 10px 18px;border-bottom:1px solid var(--border)}
+.work-head b{font-size:15px;color:var(--text)}
+.work-act{display:flex;align-items:center;gap:8px}
+.work-new{font-size:12.5px;font-weight:700;color:var(--accent);text-decoration:none;padding:5px 10px;border-radius:14px;box-shadow:inset 0 0 0 1px var(--accent-m)}
+.work-act button{border:none;background:none;font-size:24px;color:var(--text3);cursor:pointer;line-height:1;padding:0 4px}
+#workFrame{flex:1;width:100%;border:none}
+@media (max-width:480px){.work-bg{padding:0}.work-box{height:100%;border-radius:0}.header-right .btn-sched{padding:5px 9px!important;font-size:11px!important}}
 </style>
 </head>
 <body>
@@ -1287,6 +1300,7 @@ button[onclick="closeSchModal()"]{color:var(--soft-tx)!important}
       <span class="logo-txt">위촉준비</span>
     </div>
     <div class="header-right">
+      <button class="btn-sched" onclick="openWorkModal()">📋 위촉추가업무</button>
       <button class="btn-sched" onclick="openSchModal()">📅 전체일정</button>
     </div>
   </div>
@@ -1579,6 +1593,21 @@ button[onclick="closeSchModal()"]{color:var(--soft-tx)!important}
       <a id="modal-link" href="" target="_blank" class="err-modal-link">🔗 생보 신청 링크 바로가기</a>
     </div>
     <button class="err-modal-btn" id="modal-btn" onclick="closeModal()">확인 후 다시 입력</button>
+  </div>
+</div>
+
+
+<!-- 위촉추가업무 매뉴얼 -->
+<div id="workModal" class="work-bg" onclick="if(event.target===this)closeWorkModal()">
+  <div class="work-box">
+    <div class="work-head">
+      <b>📋 위촉추가업무</b>
+      <div class="work-act">
+        <a href="wichok_work.html" target="_blank" class="work-new">새 창으로 열기</a>
+        <button onclick="closeWorkModal()" aria-label="닫기">×</button>
+      </div>
+    </div>
+    <iframe id="workFrame" title="위촉추가업무 매뉴얼" loading="lazy"></iframe>
   </div>
 </div>
 
@@ -3293,6 +3322,19 @@ function showPdfErr(name) {
     '첨부할 수 없는 파일이에요', '📄', '확인'
   );
 }
+
+// ── 위촉추가업무 매뉴얼 ──
+function openWorkModal() {
+  const f = document.getElementById('workFrame');
+  if (!f.getAttribute('src')) f.setAttribute('src', 'wichok_work.html');
+  document.getElementById('workModal').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+function closeWorkModal() {
+  document.getElementById('workModal').classList.remove('show');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeWorkModal(); });
 
 // ── 다운로드 ──
 function dlPdf(bytes,filename){
