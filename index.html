@@ -2007,7 +2007,7 @@ function renderPrepSummary() {
       <div class="ps-bar"><i style="width:${total ? Math.round(done / total * 100) : 0}%"></i></div>
       ${left.length ? `<div class="ps-left">남은 서류 · ${left.slice(0, 3).join(', ')}${left.length > 3 ? ` 외 ${left.length - 3}개` : ''}</div>` : `<div class="ps-left" style="color:#1F7A52">모든 서류를 준비했어요</div>`}
     </div></div>
-    <button class="ps-copy" onclick="copyPrepSummary()">전체 내용 복사하기</button>
+    <div class="ps-btns"><button class="ps-copy" onclick="copyPrepSummary()">전체 내용 복사하기</button><button class="ps-copy ps-print" onclick="printChecklist()">체크리스트 출력</button></div>
     <div class="ps-toast" id="psToast">복사했어요</div>
   </div>`;
 }
@@ -2059,6 +2059,88 @@ function celebrateDone() {
   setTimeout(() => layer.remove(), 4200);
 }
 
+// ── 체크리스트 한 장 출력 ──
+function printChecklist() {
+  if (!S.wtype || !S.career || !S.checklist) return;
+  const esc = t => String(t).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const today = getToday();
+  const states = S.checklist.map(it => ({ it, ...prepItemState(it) }));
+  const done = states.filter(s => s.done).length;
+  const dl = prepDeadlines();
+  const cb = on => `<i class="cb${on ? ' on' : ''}"></i>`;
+  let sec = '', body = '';
+  states.forEach(s => {
+    if (s.it.sec !== sec) { if (sec) body += '</section>'; sec = s.it.sec; body += `<section><h3>${esc(sec)}</h3>`; }
+    const sub = s.it.sub && !s.it.sub.startsWith('_') ? `<small>${esc(s.it.sub)}</small>` : '';
+    body += `<div class="it">${cb(s.done)}<div class="tx"><span>${esc(s.it.text.replace(' 선택', ''))}</span>${sub}`;
+    if (s.it.sub === '_PASS_GROUP_' || s.it.sub === '_CERT_GROUP_') {
+      const opts = s.it.opts || (s.it.sub === '_PASS_GROUP_' ? getPassOptions() : getCertOptions());
+      body += '<ul>' + opts.map(o => `<li>${cb(s.picked.includes(o))}${esc(o)}</li>`).join('') + '</ul>';
+    }
+    body += '</div></div>';
+  });
+  if (sec) body += '</section>';
+  const html = `<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8"><title>위촉 서류 체크리스트</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+@page{size:A4;margin:12mm 13mm}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Pretendard Variable",Pretendard,"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo",sans-serif;color:#1F1A1D;font-size:9.6pt;line-height:1.45;letter-spacing:-.01em;-webkit-print-color-adjust:exact;print-color-adjust:exact;font-variant-numeric:tabular-nums}
+header{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:9px;border-bottom:1.2px solid #1F1A1D}
+.eyebrow{font-size:7.5pt;font-weight:600;letter-spacing:.14em;color:#D6336C;margin-bottom:3px}
+h1{font-size:19pt;font-weight:800;letter-spacing:-.03em;line-height:1.1}
+.date{font-size:8.5pt;color:#8A7F84;font-weight:500}
+.meta{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:12px 0 10px}
+.meta div{border-bottom:.8px solid #BDB4B8;padding:0 0 4px;font-size:8pt;color:#8A7F84;font-weight:600;height:24px}
+.info{display:grid;grid-template-columns:1.25fr 1fr 1fr;border:.8px solid #E3DDE0;border-radius:6px;overflow:hidden;margin-bottom:6px}
+.info > div{padding:8px 11px;border-left:.8px solid #E3DDE0}
+.info > div:first-child{border-left:none;background:#FBF8F9}
+.lb{font-size:7.5pt;color:#8A7F84;font-weight:600;margin-bottom:2px}
+.vl{font-size:10.5pt;font-weight:700;letter-spacing:-.02em}
+.vl.pk{color:#D6336C}
+.sm{font-size:8pt;color:#2F7D5B;font-weight:600;margin-top:1px}
+.note{font-size:7.8pt;color:#8A6A2E;margin:0 0 12px 2px}
+.cols{column-count:2;column-gap:18px;column-rule:.6px solid #EEE9EB}
+section{break-inside:avoid;margin-bottom:11px}
+h3{font-size:8.2pt;font-weight:700;color:#D6336C;letter-spacing:.02em;padding-bottom:4px;margin-bottom:2px;border-bottom:.8px solid #F0D3DE}
+.it{display:flex;gap:8px;padding:5px 0;border-bottom:.6px solid #F1EDEF;break-inside:avoid}
+.tx{flex:1;min-width:0}
+.tx span{font-weight:500}
+.tx small{display:block;font-size:7.6pt;color:#9A9095;margin-top:1px}
+.cb{flex-shrink:0;display:inline-block;width:11px;height:11px;border:1px solid #A89DA2;border-radius:2.5px;margin-top:2px;position:relative}
+.cb.on{border-color:#D6336C;background:#FCE7EF}
+.cb.on::after{content:"";position:absolute;left:3px;top:.5px;width:3px;height:6px;border:solid #D6336C;border-width:0 1.4px 1.4px 0;transform:rotate(45deg)}
+ul{list-style:none;margin-top:4px}
+li{display:flex;gap:6px;align-items:flex-start;font-size:8pt;color:#4A4246;padding:1.5px 0}
+li .cb{width:9px;height:9px;margin-top:2px}
+li .cb.on::after{left:2.3px;top:0;width:2.5px;height:5px}
+footer{margin-top:6px;padding-top:6px;border-top:.8px solid #E3DDE0;display:flex;justify-content:space-between;font-size:7.8pt;color:#9A9095}
+footer b{color:#1F1A1D;font-weight:700}
+</style></head><body>
+<header><div><div class="eyebrow">PRo 위촉 준비</div><h1>위촉 서류 체크리스트</h1></div><div class="date">${today.y4}. ${today.mm}. ${today.dd} 출력</div></header>
+<div class="meta"><div>성명</div><div>사번</div><div>접수 총무</div></div>
+<div class="info">
+  <div><div class="lb">위촉 구분</div><div class="vl">${esc(WT_NAME[S.wtype])}</div><div class="sm" style="color:#6B6166">${esc(careerText())}</div></div>
+  ${dl.map(x => `<div><div class="lb">${esc(x.k)}</div><div class="vl pk">${esc(x.d)}${x.w ? '까지' : ''}</div>${x.w ? `<div class="sm">${esc(x.w)}</div>` : ''}</div>`).join('')}
+  ${dl.length < 2 ? '<div></div>'.repeat(2 - dl.length) : ''}
+</div>
+<p class="note">서류 마감은 본사 도착 기준이에요 (성수 본점 아님) · 서류는 미리 제출해 주세요</p>
+<div class="cols">${body}</div>
+<footer><span>준비 서류 <b>${done}</b> / ${states.length}개 체크됨</span><span>incar-pro.github.io/new</span></footer>
+</body></html>`;
+  let fr = document.getElementById('printFrame');
+  if (fr) fr.remove();
+  fr = document.createElement('iframe');
+  fr.id = 'printFrame';
+  fr.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden';
+  document.body.appendChild(fr);
+  const w = fr.contentWindow, doc = w.document;
+  doc.open(); doc.write(html); doc.close();
+  const go = () => { w.focus(); w.print(); };
+  // 글꼴을 다 불러온 뒤 인쇄 (최대 1.5초 기다림)
+  Promise.race([ (doc.fonts && doc.fonts.ready) || Promise.resolve(), new Promise(r => setTimeout(r, 1500)) ])
+    .then(() => setTimeout(go, 150));
+}
 function tryBuild() {
   if (!S.wtype || !S.career) {
     document.getElementById('clWrap').style.display = 'none';
