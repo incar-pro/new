@@ -2232,6 +2232,7 @@ function buildMixedDocs(items, nextId) {
       grp(sec, `합격증 선택 (${g.label})`, '_PASS_GROUP_', passOptsFor(g.wt));
       grp(sec, `수료증 선택 (${g.label})`, '_CERT_GROUP_', certOptsFor(g.wt, '신규'));
     } else if (g.ca === '경력1') {
+      add(sec, '신분증 사본'); add(sec, '통장 사본');
       grp(sec, `합격증 선택 (${g.label})`, '_PASS_GROUP_', passOptsFor(g.wt));
       grp(sec, `수료증 선택 (${g.label})`, '_CERT_GROUP_', certOptsFor(g.wt, '신규'));
       add(sec, '경력증명서', '금융사고 유무 기재'); add(sec, '협회말소 유무 확인', '손 / 생보 모두 말소');
@@ -2239,6 +2240,7 @@ function buildMixedDocs(items, nextId) {
     } else {
       add(sec, '신분증 사본'); add(sec, '통장 사본');
       grp(sec, `수료증 선택 (${g.label})`, '_CERT_GROUP_', certOptsFor(g.wt, '경력2'));
+      add(sec, '경력증명서', '금융사고 유무 기재'); add(sec, '협회말소 유무 확인', '손 / 생보 모두 말소');
       add(sec, '이클린 — 본인정보조회-> 인쇄-> 전체출력');
     }
   });
@@ -2274,8 +2276,10 @@ function buildChecklist() {
     items.push({id:id++, sec:'서류 (신규)', text:'수료증 선택', sub:'_CERT_GROUP_', checked:false});
   }
 
-  // 경력1
+  // 경력1 (3년 이내 · 365일 미만) — 위촉 안내 체크리스트 기준
   if (ca === '경력1') {
+    items.push(mk('서류 (경력1)','신분증 사본',''));
+    items.push(mk('서류 (경력1)','통장 사본',''));
     items.push({id:id++, sec:'서류 (경력1)', text:'합격증 선택', sub:'_PASS_GROUP_', checked:false});
     items.push({id:id++, sec:'서류 (경력1)', text:'수료증 선택', sub:'_CERT_GROUP_', checked:false});
     items.push(mk('서류 (경력1)','경력증명서','금융사고 유무 기재'));
@@ -2283,12 +2287,14 @@ function buildChecklist() {
     items.push(mk('서류 (경력1)','이클린 — 본인정보조회-> 인쇄-> 전체출력',''));
   }
 
-  // 경력2
+  // 경력2 (3년 이내 · 365일 이상) — 위촉 안내 체크리스트 기준
   if (ca === '경력2') {
     items.push(mk('서류 (경력2)','신분증 사본',''));
     items.push(mk('서류 (경력2)','통장 사본',''));
     items.push({id:id++, sec:'서류 (경력2)', text:'수료증 선택', sub:'_CERT_GROUP_', checked:false});
-    items.push(mk('서류 (경력2)','이클린 — 본인정보조회-> 인쇄-> 전체출력',''));
+    items.push(mk('서류 (경력2)','경력증명서','금융사고 유무 기재'));
+    items.push(mk('서류 (경력2)','협회말소 유무 확인','손 / 생보 모두 말소'));
+    items.push(mk('서류 (경력2)','이클린 — 모집종사자-본인정보조회-> 인쇄-> 전체출력',''));
   }
 
   S.checklist = items;
