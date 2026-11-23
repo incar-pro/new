@@ -1723,6 +1723,18 @@ const SONBO = (function() {
       d.setDate(d.getDate() + 1);
     }
   }
+  // 공휴일 등으로 따로 공지된 일정 (서류 마감 → 위촉일). 자동 계산보다 우선 적용
+  const OVERRIDES = [
+    ['2026-12-17', '2026-12-28'], // 8차 · 크리스마스 공휴일로 변경
+    ['2026-12-21', '2026-12-30']  // 9차 · 크리스마스 공휴일로 변경
+  ];
+  const key = x => x.getFullYear() * 10000 + (x.getMonth() + 1) * 100 + x.getDate();
+  OVERRIDES.forEach(([dl, w]) => {
+    const D = new Date(dl + 'T00:00:00'), W = new Date(w + 'T00:00:00');
+    const hit = result.find(r => key(r.deadline) === key(D));
+    if (hit) hit.wichok = W; else result.push({ deadline: D, wichok: W });
+  });
+  result.sort((a, b) => a.deadline - b.deadline);
   return result;
 })();
 
